@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# DyslexiaDetection
-=======
 
 # dyslexiadetectorapp
 ### Table of contents
@@ -60,4 +57,3 @@ Resolve the errors and warnings that are shown in the application.
 ### Support
 
 If you have any problems or questions, go to our Discord channel, where we will help you as quickly as possible: https://discord.com/invite/rFMnCG5MZ7
->>>>>>> 7b3ff69 (Generated random exercises for Q1-4 and integrated sounds)
