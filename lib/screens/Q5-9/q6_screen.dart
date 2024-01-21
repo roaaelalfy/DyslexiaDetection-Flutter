@@ -1,9 +1,7 @@
 import 'dart:math';
-import 'package:dyslexiadetectorapp/core/app_export.dart';
-import 'package:dyslexiadetectorapp/widgets/6x6Matrix.dart';
 import 'package:flutter/material.dart';
 
-import '../Q1-4/GenerateRandomLetters.dart';
+import '../GenerateRandomExercises.dart';
 
 class Q6Screen extends StatelessWidget {
   Q6Screen({Key? key}): super(key: key,);
@@ -18,6 +16,7 @@ class Q6Screen extends StatelessWidget {
         body: DyslexiaExerciseWidget(
           letters: generateExercise(Q6LettersLists),
           gridSize: 6,
+          randomizeList: true,
         )
     );
   }

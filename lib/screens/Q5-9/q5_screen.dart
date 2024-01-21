@@ -3,7 +3,7 @@ import 'package:dyslexiadetectorapp/core/app_export.dart';
 import 'package:dyslexiadetectorapp/widgets/5x5Matrix.dart';
 import 'package:flutter/material.dart';
 
-import '../Q1-4/GenerateRandomLetters.dart';
+import '../GenerateRandomExercises.dart';
 
 class Q5Screen extends StatelessWidget {
   Q5Screen({Key? key}): super(key: key,);
@@ -18,6 +18,7 @@ class Q5Screen extends StatelessWidget {
         body: DyslexiaExerciseWidget(
           letters: generateExercise(Q5LettersLists),
           gridSize: 5,
+          randomizeList: true,
         )
     );
   }

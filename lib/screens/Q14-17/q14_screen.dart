@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+
 class Q14Screen extends StatefulWidget {
   Q14Screen({Key? key}): super(key: key,);
   @override
@@ -31,7 +34,8 @@ class _Q14ScreenState extends State<Q14Screen> {
     double height = MediaQuery.of(context).size.height;
 
     double horizontalPadding = width * 0.22;
-    double verticalPadding = height * 0.30;
+    double verticalPadding = height * 0.02;
+    double cardSize = min(width, height) * 0.9;
 
     return Scaffold(
       body: Padding(
@@ -39,10 +43,11 @@ class _Q14ScreenState extends State<Q14Screen> {
         child: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 5,
+            childAspectRatio: 1.05,
           ),
           itemCount: exerciseletters.length,
           itemBuilder: (context, index) {
-            return _buildGridTile(exerciseletters[index]);
+            return _buildGridTile(exerciseletters[index],cardSize);
           },
         ),
       ),
@@ -50,14 +55,18 @@ class _Q14ScreenState extends State<Q14Screen> {
 
   }
 
-  Widget _buildGridTile(String letter) {
+  Widget _buildGridTile(String letter,cardSize) {
     return GestureDetector(
       child: Card(
         elevation: 6,
-        child: Center(
-          child: Text(
-            letter,
-            style: TextStyle(fontSize: 24.0,),
+        child: Container(
+          width: cardSize,
+          height: cardSize,
+          child: Center(
+            child: Text(
+              letter,
+              style: TextStyle(fontSize: 24.0,),
+            ),
           ),
         ),
       ),
@@ -73,18 +82,14 @@ class _Q14ScreenState extends State<Q14Screen> {
     // Choose a random key from the map
     List<String> randomKey = map.keys.toList()..shuffle();
     String selectedKey = randomKey.first;
-
-    // Use the selected key to get the corresponding list
     exerciseletters = map[selectedKey]!;
 
-    // Shuffle the list
     exerciseletters.shuffle();
 
     return selectedKey;
   }
 
   Future<void> loadLetterSound(String Key) async{
-
 
     final audioplayer = AudioPlayer();
     await audioplayer.play(AssetSource('sounds/$Key.mp3'));

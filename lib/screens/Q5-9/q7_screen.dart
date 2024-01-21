@@ -1,22 +1,22 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../GenerateRandomLetters.dart';
 
-class Q3Screen extends StatelessWidget {
-  Q3Screen({Key? key}): super(key: key,);
+import '../GenerateRandomExercises.dart';
 
-  List<List<String>> Q3LettersLists = [
-    ['a','e','i','u','o','n','m','w' ,'u','h','g','d','p','q','b'],
-    ['n','m','w' ,'u','h'],
-    ['g','d','p','q','b'],
+class Q7Screen extends StatelessWidget {
+  Q7Screen({Key? key}): super(key: key,);
+
+  List<List<String>> Q7LettersLists = [
+    ['pra','par','gar','qar','are','gra','dar','qar','der','ger','gre','bar']
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: DyslexiaExerciseWidget(
-          letters: generateExercise(Q3LettersLists),
+          letters: generateExercise(Q7LettersLists),
           gridSize: 5,
+          randomizeList: true,
         )
     );
   }
@@ -35,3 +35,4 @@ class Q3Screen extends StatelessWidget {
   }
 
 }
+

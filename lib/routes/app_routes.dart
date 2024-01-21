@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dyslexiadetectorapp/screens/q29_screen/q29_screen.dart';
-import 'package:dyslexiadetectorapp/screens/q9_screen/q9_screen.dart';
-import 'package:dyslexiadetectorapp/screens/q10_screen/q10_screen.dart';
+import 'package:dyslexiadetectorapp/screens/Q5-9/q9_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q18_screen/q18_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q19_screen/q19_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q22_screen/q22_screen.dart';
@@ -12,15 +11,16 @@ import 'package:dyslexiadetectorapp/screens/q25_screen/q25_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q27_screen/q27_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q28_screen/q28_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q30_screen/q30_screen.dart';
-import '../screens/Q1-4/q1_screen/q1_screen.dart';
-import '../screens/Q1-4/q2_screen/q2_screen.dart';
-import '../screens/Q1-4/q3_screen/q3_screen.dart';
-import '../screens/Q1-4/q4_screen/q4_screen.dart';
-import '../screens/q14To17_screen/q14_screen.dart';
-import '../screens/q5_screen/q5_screen.dart';
-import '../screens/q6_screen/q6_screen.dart';
-import '../screens/q7_screen/q7_screen.dart';
-import '../screens/q8_screen/q8_screen.dart';
+import '../screens/Q1-4/q1_screen.dart';
+import '../screens/Q1-4/q2_screen.dart';
+import '../screens/Q1-4/q3_screen.dart';
+import '../screens/Q1-4/q4_screen.dart';
+import '../screens/Q10-13/q10_screen.dart';
+import '../screens/Q14-17/q14_screen.dart';
+import '../screens/Q5-9/q5_screen.dart';
+import '../screens/Q5-9/q6_screen.dart';
+import '../screens/Q5-9/q7_screen.dart';
+import '../screens/Q5-9/q8_screen.dart';
 import '../screens/q30_screen/q30_1_screen.dart';
 
 

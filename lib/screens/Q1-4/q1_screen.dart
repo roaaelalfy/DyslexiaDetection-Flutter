@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../GenerateRandomLetters.dart';
+import '../GenerateRandomExercises.dart';
 
 class Q1Screen extends StatelessWidget {
   Q1Screen({Key? key}): super(key: key,);
@@ -16,6 +16,7 @@ class Q1Screen extends StatelessWidget {
       body: DyslexiaExerciseWidget(
         letters: generateExercise(Q1LettersLists),
         gridSize: 3,
+        randomizeList: true,
       )
     );
   }

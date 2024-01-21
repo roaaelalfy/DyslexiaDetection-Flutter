@@ -7,8 +7,10 @@ import 'package:flutter_tts/flutter_tts.dart';
 class DyslexiaExerciseWidget extends StatefulWidget {
   final List<String> letters;
   final int gridSize;
+  final bool randomizeList;
+  //final void Function() onTapFunction;
 
-  DyslexiaExerciseWidget({required this.letters, required this.gridSize});
+  DyslexiaExerciseWidget({required this.letters, required this.gridSize, required this.randomizeList});
 
   @override
   State<DyslexiaExerciseWidget> createState() => _DyslexiaExerciseWidgetState();
@@ -22,7 +24,9 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   @override
   void initState() {
     super.initState();
-    exerciseletters = generateExercise(widget.letters,widget.gridSize);
+    widget.randomizeList ?
+    exerciseletters = generateExercise(widget.letters,widget.gridSize):
+    exerciseletters = widget.letters..shuffle();
     _initTts();
     loadLetterSound(exerciseletters);
   }
@@ -43,7 +47,8 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
     double height = MediaQuery.of(context).size.height;
 
     double horizontalPadding = width * 0.22;
-    double verticalPadding = height * 0.30;
+    double verticalPadding = height * 0.02;
+    double cardSize = min(width, height) * 0.9;
 
     return Scaffold(
       body: Padding(
@@ -51,10 +56,11 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
         child: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: widget.gridSize,
+            childAspectRatio: 1.05,
           ),
           itemCount: exerciseletters.length,
           itemBuilder: (context, index) {
-            return _buildGridTile(exerciseletters[index]);
+            return _buildGridTile(exerciseletters[index],cardSize);
           },
         ),
       ),
@@ -62,14 +68,18 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
 
   }
 
-  Widget _buildGridTile(String letter) {
+  Widget _buildGridTile(String letter,cardSize) {
     return GestureDetector(
       child: Card(
         elevation: 6,
-        child: Center(
-          child: Text(
-            letter,
-            style: TextStyle(fontSize: 24.0,),
+        child: Container(
+          width: cardSize,
+          height: cardSize,
+          child: Center(
+            child: Text(
+              letter,
+              style: TextStyle(fontSize: 18.0,),
+            ),
           ),
         ),
       ),
@@ -97,6 +107,9 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
 
     int randomletterIndex = random.nextInt(exerciseletters.length);
     randomletter = exerciseletters[randomletterIndex];
+
+    // final audioplayer = AudioPlayer();
+    // await audioplayer.play(AssetSource('sounds/$randomletter.mp3'));
 
     // Speak the random letter
     try {
