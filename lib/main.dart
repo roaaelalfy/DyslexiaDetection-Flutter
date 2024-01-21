@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
           theme: theme,
           title: 'dyslexiadetectorapp',
           debugShowCheckedModeBanner: false,
-          initialRoute: AppRoutes.q1Screen,
+          initialRoute: AppRoutes.q2Screen,
           routes: AppRoutes.routes,
         );
       },

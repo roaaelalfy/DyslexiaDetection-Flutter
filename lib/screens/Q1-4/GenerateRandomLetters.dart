@@ -2,6 +2,8 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import 'package:flutter_tts/flutter_tts.dart';
+
 class DyslexiaExerciseWidget extends StatefulWidget {
   final List<String> letters;
   final int gridSize;
@@ -15,15 +17,23 @@ class DyslexiaExerciseWidget extends StatefulWidget {
 class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   late List<String> exerciseletters;
   late String randomletter;
+  FlutterTts flutterTts = FlutterTts();
 
   @override
   void initState() {
     super.initState();
     exerciseletters = generateExercise(widget.letters,widget.gridSize);
+    _initTts();
     loadLetterSound(exerciseletters);
   }
+
+  Future<void> _initTts() async {
+    await flutterTts.setLanguage("en-US");
+  }
+
   @override
   void dispose() {
+    flutterTts.stop(); // Stop TTS when disposing the widget
     super.dispose();
   }
 
@@ -88,8 +98,13 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
     int randomletterIndex = random.nextInt(exerciseletters.length);
     randomletter = exerciseletters[randomletterIndex];
 
-    final audioplayer = AudioPlayer();
-    await audioplayer.play(AssetSource('sounds/$randomletter.mp3'));
+    // Speak the random letter
+    try {
+      await flutterTts.speak(randomletter);
+      print("104");
+    } catch (e) {
+      print("TTS Error: $e");
+    }
 
   }
 }

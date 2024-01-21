@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dyslexiadetectorapp/screens/q29_screen/q29_screen.dart';
-import 'package:dyslexiadetectorapp/screens/q5_six_screen/q5_six_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q9_screen/q9_screen.dart';
-import 'package:dyslexiadetectorapp/screens/q7_eight_screen/q7_eight_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q10_screen/q10_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q14_screen/q14_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q15_screen/q15_screen.dart';
@@ -22,7 +20,12 @@ import '../screens/Q1-4/q1_screen/q1_screen.dart';
 import '../screens/Q1-4/q2_screen/q2_screen.dart';
 import '../screens/Q1-4/q3_screen/q3_screen.dart';
 import '../screens/Q1-4/q4_screen/q4_screen.dart';
+import '../screens/q5_screen/q5_screen.dart';
+import '../screens/q6_screen/q6_screen.dart';
+import '../screens/q7_screen/q7_screen.dart';
+import '../screens/q8_screen/q8_screen.dart';
 import '../screens/q30_screen/q30_1_screen.dart';
+
 
 class AppRoutes {
   static const String q1Screen = '/q1_screen';
@@ -30,9 +33,10 @@ class AppRoutes {
   static const String q3Screen = '/q3_screen';
   static const String q4Screen = '/q4_screen';
   static const String q5Screen = '/q5_screen';
-  static const String q5SixScreen = '/q5_six_screen';
-  static const String q7EightScreen = '/q7_eight_screen';
-  static const String q9Screen = '/q9screen';
+  static const String q6Screen = '/q6_screen';
+  static const String q7Screen = '/q7_screen';
+  static const String q8Screen = '/q8_screen';
+  static const String q9Screen = '/q9_screen';
   static const String q10Screen = '/q10_screen';
   static const String q14Screen = '/q14_screen';
   static const String q15Screen = '/q15_screen';
@@ -58,8 +62,10 @@ class AppRoutes {
     q2Screen: (context) => Q2Screen(),
     q3Screen: (context) => Q3Screen(),
     q4Screen: (context) => Q4Screen(),
-    q5SixScreen: (context) => Q5Screen(),
-    q7EightScreen: (context) => Q7Screen(),
+    q5Screen: (context) => Q5Screen(),
+    q6Screen: (context) => Q6Screen(),
+    q7Screen: (context) => Q7Screen(),
+    q8Screen: (context) => Q8Screen(),
     q9Screen: (context) => Q9Screen(),
     q10Screen: (context) => Q10Screen(),
     q14Screen: (context) => Q14Screen(),

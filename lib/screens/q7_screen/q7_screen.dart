@@ -1,23 +1,23 @@
 import 'dart:math';
 import 'package:dyslexiadetectorapp/core/app_export.dart';
-import 'package:dyslexiadetectorapp/widgets/6x6Matrix.dart';
+import 'package:dyslexiadetectorapp/widgets/5x5Matrix.dart';
 import 'package:flutter/material.dart';
 
 import '../Q1-4/GenerateRandomLetters.dart';
 
-class Q9Screen extends StatelessWidget {
-  Q9Screen({Key? key}): super(key: key,);
+class Q7Screen extends StatelessWidget {
+  Q7Screen({Key? key}): super(key: key,);
 
-  List<List<String>> Q9LettersLists = [
-    ['grel','glis','glil','gris','gerl']
+  List<List<String>> Q7LettersLists = [
+    ['pra','par','gar','qar','are','gra','dar','qar','der','ger','gre','bar']
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: DyslexiaExerciseWidget(
-          letters: generateExercise(Q9LettersLists),
-          gridSize: 6,
+          letters: generateExercise(Q7LettersLists),
+          gridSize: 5,
         )
     );
   }

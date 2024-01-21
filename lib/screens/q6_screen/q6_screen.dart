@@ -5,18 +5,18 @@ import 'package:flutter/material.dart';
 
 import '../Q1-4/GenerateRandomLetters.dart';
 
-class Q9Screen extends StatelessWidget {
-  Q9Screen({Key? key}): super(key: key,);
+class Q6Screen extends StatelessWidget {
+  Q6Screen({Key? key}): super(key: key,);
 
-  List<List<String>> Q9LettersLists = [
-    ['grel','glis','glil','gris','gerl']
+  List<List<String>> Q6LettersLists = [
+    ['ne','no','de','na','pu','qu','be','qe','da','pa','ba','pe','da']
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: DyslexiaExerciseWidget(
-          letters: generateExercise(Q9LettersLists),
+          letters: generateExercise(Q6LettersLists),
           gridSize: 6,
         )
     );
