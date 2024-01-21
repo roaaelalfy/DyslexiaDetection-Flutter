@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:dyslexiadetectorapp/screens/q29_screen/q29_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q9_screen/q9_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q10_screen/q10_screen.dart';
-import 'package:dyslexiadetectorapp/screens/q14_screen/q14_screen.dart';
-import 'package:dyslexiadetectorapp/screens/q15_screen/q15_screen.dart';
-import 'package:dyslexiadetectorapp/screens/q16_screen/q16_screen.dart';
-import 'package:dyslexiadetectorapp/screens/q17_screen/q17_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q18_screen/q18_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q19_screen/q19_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q22_screen/q22_screen.dart';
@@ -20,6 +16,7 @@ import '../screens/Q1-4/q1_screen/q1_screen.dart';
 import '../screens/Q1-4/q2_screen/q2_screen.dart';
 import '../screens/Q1-4/q3_screen/q3_screen.dart';
 import '../screens/Q1-4/q4_screen/q4_screen.dart';
+import '../screens/q14To17_screen/q14_screen.dart';
 import '../screens/q5_screen/q5_screen.dart';
 import '../screens/q6_screen/q6_screen.dart';
 import '../screens/q7_screen/q7_screen.dart';
@@ -39,9 +36,6 @@ class AppRoutes {
   static const String q9Screen = '/q9_screen';
   static const String q10Screen = '/q10_screen';
   static const String q14Screen = '/q14_screen';
-  static const String q15Screen = '/q15_screen';
-  static const String q16Screen = '/q16_screen';
-  static const String q17Screen = '/q17_screen';
   static const String q18Screen = '/q18_screen';
   static const String q19Screen = '/q19_screen';
   static const String q22Screen = '/q22_screen';
@@ -69,9 +63,6 @@ class AppRoutes {
     q9Screen: (context) => Q9Screen(),
     q10Screen: (context) => Q10Screen(),
     q14Screen: (context) => Q14Screen(),
-    q15Screen: (context) => Q15Screen(),
-    q16Screen: (context) => Q16Screen(),
-    q17Screen: (context) => Q17Screen(),
     q18Screen: (context) => Q18Screen(),
     q19Screen: (context) => Q19Screen(),
     q22Screen: (context) => Q22Screen(),
