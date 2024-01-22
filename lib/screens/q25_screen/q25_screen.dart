@@ -1,5 +1,7 @@
 import 'package:dyslexiadetectorapp/core/app_export.dart';
+import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class Q25Screen extends StatefulWidget {
   const Q25Screen({Key? key}) : super(key: key);
@@ -9,8 +11,33 @@ class Q25Screen extends StatefulWidget {
 }
 
 class _Q25ScreenState extends State<Q25Screen> {
-  List<String> words = ["Smoking", "is", "prohibited", "of", "the", "entire", "craft"];
-  List<bool> clickedStatus = List.generate(7, (index) => false);
+  Map<String, List<String>> Q25Map = {
+    "of": ['Smoking','is','prohibited','of','the','entire','craft.'],
+    "them":  ['This','homework','is','so','easy','.  I','can','do','them' ,'in','five','minutes.'],
+    "was": ['I','swim','in','the','sea','whenever','the','weather','was','fine.'],
+    "were":['When','we','went','shopping','it','were','very','busy.'],
+  };
+  late List<bool> clickedStatus;
+  late List<String> exerciseWords;
+  FlutterTts flutterTts = FlutterTts();
+
+  @override
+  void initState() {
+    super.initState();
+    exerciseWords = generateExercise(Q25Map);
+    _initTts();
+    loadSound();
+  }
+  @override
+  void dispose() {
+    flutterTts.stop();
+    super.dispose();
+  }
+
+  Future<void> _initTts() async {
+    await flutterTts.setLanguage("en-US");
+    await flutterTts.setSpeechRate(0.2);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +65,8 @@ class _Q25ScreenState extends State<Q25Screen> {
             child: Wrap(
               spacing: 8.h,
               children: List.generate(
-                words.length,
-                (index) => _buildWord(context, words[index], index),
+                exerciseWords.length,
+                    (index) => _buildWord(context, exerciseWords[index], index),
               ),
             ),
           ),
@@ -53,6 +80,7 @@ class _Q25ScreenState extends State<Q25Screen> {
       onTap: () {
         setState(() {
           clickedStatus[index] = !clickedStatus[index];
+          // store the selected word then navigate
           Navigator.pushNamed(context, AppRoutes.q26Screen);
         });
       },
@@ -67,4 +95,23 @@ class _Q25ScreenState extends State<Q25Screen> {
       ),
     );
   }
+
+  //Choose random list to generate exercise
+  List<String> generateExercise(Map<String, List<String>> map) {
+    // Choose a random key from the map
+    List<String> randomKey = map.keys.toList()..shuffle();
+    String selectedKey = randomKey.first;
+    exerciseWords = map[selectedKey]!;
+
+    clickedStatus = List.generate(exerciseWords.length, (index) => false);
+    return exerciseWords;
+  }
+  Future<void> loadSound() async {
+    try {
+      await flutterTts.speak("Find the wrong word.");
+    } catch (e) {
+      print("TTS Error: $e");
+    }
+  }
+
 }

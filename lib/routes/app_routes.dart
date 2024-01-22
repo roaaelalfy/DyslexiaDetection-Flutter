@@ -22,6 +22,8 @@ import '../screens/Q5-9/q8_screen.dart';
 import '../screens/Q18-21/q18_screen.dart';
 import '../screens/Q18-21/q20_screen.dart';
 import '../screens/q30_screen/q30_1_screen.dart';
+import '../screens/q31_screen/q31_screen.dart';
+import '../screens/q32_screen/q32_screen.dart';
 
 
 class AppRoutes {
@@ -49,6 +51,7 @@ class AppRoutes {
   static const String q30Screen = '/q30_screen';
   static const String q301Screen = '/q30_1_screen';
   static const String q31Screen = '/q31_screen';
+  static const String q32Screen = '/q32_screen';
   static const String appNavigationScreen = '/app_navigation_screen';
 
   static Map<String, WidgetBuilder> routes = {
@@ -75,6 +78,8 @@ class AppRoutes {
     q29Screen: (context) => Q29Screen(),
     q30Screen: (context) => Q30Screen(),
     q301Screen: (context) => Q301Screen(),
+    q31Screen: (context) => Q31Screen(),
+    q32Screen: (context) => Q32Screen(),
     //appNavigationScreen: (context) => AppNavigationScreen()
   };
 }

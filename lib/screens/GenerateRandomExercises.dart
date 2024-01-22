@@ -109,9 +109,6 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
     int randomletterIndex = random.nextInt(exerciseletters.length);
     randomletter = exerciseletters[randomletterIndex];
 
-    // final audioplayer = AudioPlayer();
-    // await audioplayer.play(AssetSource('sounds/$randomletter.mp3'));
-
     // Speak the random letter
     try {
       await flutterTts.speak("Choose  "+randomletter);

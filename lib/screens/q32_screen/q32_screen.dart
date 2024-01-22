@@ -1,24 +1,45 @@
+import 'dart:math';
+
 import 'package:dyslexiadetectorapp/core/app_export.dart';
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
-class Q301Screen extends StatefulWidget {
-  const Q301Screen({Key? key}) : super(key: key);
+class Q32Screen extends StatefulWidget {
+  const Q32Screen({Key? key}) : super(key: key);
 
   @override
-  State<Q301Screen> createState() => _Q301ScreenState();
+  _Q32ScreenState createState() => _Q32ScreenState();
 }
 
-class _Q301ScreenState extends State<Q301Screen> {
+class _Q32ScreenState extends State<Q32Screen> {
+  List<String> letters = ["smay" ,"crench","qota","wabas","glis","glaba","nana"];
+  late String nonword;
+  late int count;
   List<String> pressedLetters = [];
-  late List<String>  correctWord;
+  FlutterTts flutterTts = FlutterTts();
+
+  @override
+  void initState() {
+    super.initState();
+    nonword = generateExercise(letters);
+    _initTts();
+    loadSound(nonword);
+  }
+
+  @override
+  void dispose() {
+    flutterTts.stop();
+    super.dispose();
+  }
+
+  Future<void> _initTts() async {
+    await flutterTts.setLanguage("en-US");
+    await flutterTts.setSpeechRate(0.2);
+  }
 
   @override
   Widget build(BuildContext context) {
-    Map args = ModalRoute.of(context)!.settings.arguments as Map;
-    //retrieve correct word from previous screen
-    correctWord = args["selectedWord"].split(' ');
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
@@ -71,7 +92,7 @@ class _Q301ScreenState extends State<Q301Screen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                     SizedBox(width: 15.h),
+                    SizedBox(width: 15.h),
                     _buildContainer(context, "a"),
                     _buildContainer(context, "s"),
                     _buildContainer(context, "d"),
@@ -112,8 +133,9 @@ class _Q301ScreenState extends State<Q301Screen> {
       onTap: () {
         setState(() {
           pressedLetters.add(text);
-          if(pressedLetters.length==correctWord.length){
-            Navigator.pushNamed(context, AppRoutes.q31Screen);
+          // listen to 4 non-words then navigate to next screen
+          if(pressedLetters.length==nonword.length){
+            Navigator.pushNamed(context, AppRoutes.q32Screen);
           }
         });
       },
@@ -133,4 +155,22 @@ class _Q301ScreenState extends State<Q301Screen> {
       ),
     );
   }
+
+  //Choose random word to generate exercise
+  String generateExercise(List<String> sentences) {
+    Random random = Random();
+    int randomIndex= random.nextInt(sentences.length);
+    nonword = sentences[randomIndex];
+    return nonword;
+  }
+
+  Future<void> loadSound(String word) async {
+    try {
+      await flutterTts.speak("Write $word");
+    } catch (e) {
+      print("TTS Error: $e");
+    }
+  }
+
+
 }
