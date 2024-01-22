@@ -1,6 +1,7 @@
 import 'package:dyslexiadetectorapp/core/app_export.dart';
 import 'package:flutter/material.dart';
-
+import 'dart:math';
+import 'package:flutter_tts/flutter_tts.dart';
 class Q26Screen extends StatefulWidget {
   const Q26Screen({Key? key}) : super(key: key);
 
@@ -9,8 +10,52 @@ class Q26Screen extends StatefulWidget {
 }
 
 class _Q26ScreenState extends State<Q26Screen> {
-  List<String> testWord = ["We" , "b" , "nesday"];
+  List<Map<String, dynamic>> listOfMaps = [
+    {'b': "webnesday"},
+    {'e': "fridey"},
+    {'w': "nuwber"},
+    {'i': "iacket"},
+    {'n': "npset"},
+    {'e': "Triel"},
+    {'E':"Elash"},
+    {'e':"goel"}
+  ];
+  List<String> possibleWrongLetters = ["dbay", "daqp", "xmnu", "jegp","uaeo","uaio","FTLI","aouh"];
+  List<String> testWord = [];
+  int randomIndex=0;
+  FlutterTts flutterTts = FlutterTts();
 
+  @override
+  void initState() {
+    super.initState();
+    _generateRandomIndex();
+    _generateRandomTestWord();
+    _initTts();
+    loadLetterSound();
+  }
+  @override
+  void dispose() {
+    flutterTts.stop(); // Stop TTS when disposing the widget
+    super.dispose();
+  }
+  Future<void> _initTts() async {
+    await flutterTts.setLanguage("en-US");
+    await flutterTts.setSpeechRate(0.2);
+  }
+  String getKey() {
+    return listOfMaps[randomIndex].keys.first;
+  }
+  void _generateRandomIndex() {
+    Random random = Random();
+    randomIndex = random.nextInt(listOfMaps.length);
+  }
+
+  void _generateRandomTestWord() {
+    testWord = listOfMaps[randomIndex].values.first.split('');
+  }
+  List<String> generateRandomLetters() {
+    return possibleWrongLetters[randomIndex].split('');
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,21 +69,22 @@ class _Q26ScreenState extends State<Q26Screen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(testWord[0] , style: TextStyle( fontSize: 30),),
-                SizedBox(width: 2.h,),
-                Text(testWord[1] , style: TextStyle( color: Colors.lightBlueAccent ,fontSize: 30),),
-                SizedBox(width: 2.h,),
-                Text(testWord[2] , style: TextStyle(fontSize: 30),)
+                for (int i = 0; i < testWord.length; i++)
+                  Text(
+                    testWord[i],
+                    style: TextStyle(
+                      color: (testWord[i] == getKey()) ? Colors.red : appTheme.black900,
+                      fontSize: 30,
+                    ),
+                  ),
               ],
             ),
             SizedBox(height: 25.v),
             Wrap(
               alignment: WrapAlignment.center,
               children: [
-                _buildContainer(context, "q"),
-                _buildContainer(context, "b"),
-                _buildContainer(context, "d"),
-                _buildContainer(context, "p"),
+                for (int i = 0; i < generateRandomLetters().length; i++)
+                  _buildContainer(context, generateRandomLetters()[i], i),
               ],
             ),
             SizedBox(height: 1.v),
@@ -48,13 +94,17 @@ class _Q26ScreenState extends State<Q26Screen> {
     );
   }
 
-  Widget _buildContainer(BuildContext context, String text) {
+  Widget _buildContainer(BuildContext context, String text, int index) {
     return GestureDetector(
       onTap: () {
         setState(() {
-          testWord[1]= text;
+          // Replace the letter at the specific index with the tapped letter
+          testWord[testWord.indexOf(getKey())] = text;
+          listOfMaps.removeAt(randomIndex);
+          possibleWrongLetters.removeAt(randomIndex);
+
+
         });
-        Navigator.pushNamed(context, AppRoutes.q27Screen);
       },
       child: Container(
         margin: EdgeInsets.fromLTRB(6.h, 4.h, 0, 0),
@@ -72,4 +122,15 @@ class _Q26ScreenState extends State<Q26Screen> {
       ),
     );
   }
+  Future<void> loadLetterSound() async{
+    // Speak the random letter
+    try {
+      await flutterTts.speak("Correct the Wrong letter");
+    } catch (e) {
+      print("TTS Error: $e");
+    }
+
+  }
 }
+
+
