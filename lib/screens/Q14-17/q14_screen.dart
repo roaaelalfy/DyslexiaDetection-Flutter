@@ -1,31 +1,48 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class Q14Screen extends StatefulWidget {
   Q14Screen({Key? key}): super(key: key,);
   @override
   State<Q14Screen> createState() => _Q14ScreenState();}
+
+
 class _Q14ScreenState extends State<Q14Screen> {
   Map<String, List<String>> Q14To17Map = {
-    "F": ['E','E','E','E','E','E','F','E','E','E','E','E','E','E','E'],
-    "p":  ['q','q','q','q','q','q','q','q','q','q','q','p','q','q','q'],
-    "u": ['n','n','n','n','n','n','n','u','n','n','n','n','n','n','n'],
-    "d":['b','b','b','b','d','b','b','b','b','b','b','b','b','b','b'],
+    "F": List.filled(12, 'E') + ['F'] + List.filled(12, 'E'),
+    "p": List.filled(12, 'q') + ['p'] + List.filled(12, 'q'),
+    "u": List.filled(12, 'n') + ['u'] + List.filled(12, 'n'),
+    "d": List.filled(12, 'b') + ['d'] + List.filled(12, 'b'),
+    "e": List.filled(12, 'a') + ['e'] + List.filled(12, 'a'),
+    "i": List.filled(12, 'j') + ['i'] + List.filled(12, 'j'),
+    "M": List.filled(12, 'W') + ['M'] + List.filled(12, 'W'),
+    "q": List.filled(12, 'g') + ['q'] + List.filled(12, 'g'),
+    "K": List.filled(12, 'X') + ['K'] + List.filled(12, 'X'),
   };
 
   late String key;
   List<String> exerciseletters=[];
+  FlutterTts flutterTts = FlutterTts();
+
 
   @override
   void initState() {
     super.initState();
-    key = generateExercise(Q14To17Map);
-    loadLetterSound(key);
+    _initTts();
+    exerciseletters= generateExercise(Q14To17Map);
+    loadLetterSound();
+
   }
+
+  Future<void> _initTts() async {
+    await flutterTts.setLanguage("en-US");
+    await flutterTts.setSpeechRate(0.2);
+  }
+
   @override
   void dispose() {
+    flutterTts.stop(); // Stop TTS when disposing the widget
     super.dispose();
   }
   @override
@@ -77,22 +94,26 @@ class _Q14ScreenState extends State<Q14Screen> {
     );
   }
 
-  String generateExercise(Map<String, List<String>> map) {
+  List<String> generateExercise(Map<String, List<String>> map) {
 
     // Choose a random key from the map
     List<String> randomKey = map.keys.toList()..shuffle();
     String selectedKey = randomKey.first;
     exerciseletters = map[selectedKey]!;
-
     exerciseletters.shuffle();
-
-    return selectedKey;
+    map.remove(selectedKey);
+    return exerciseletters;
   }
 
-  Future<void> loadLetterSound(String Key) async{
+  Future<void> loadLetterSound() async{
 
-    final audioplayer = AudioPlayer();
-    await audioplayer.play(AssetSource('sounds/$Key.mp3'));
+    try {
+      await flutterTts.speak("Choose the different letter ");
+
+    } catch (e) {
+      print("TTS Error: $e");
+    }
+
 
   }
 }

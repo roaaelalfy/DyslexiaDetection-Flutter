@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dyslexiadetectorapp/screens/q29_screen/q29_screen.dart';
 import 'package:dyslexiadetectorapp/screens/Q5-9/q9_screen.dart';
-import 'package:dyslexiadetectorapp/screens/q18_screen/q18_screen.dart';
-import 'package:dyslexiadetectorapp/screens/q19_screen/q19_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q22_screen/q22_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q23_screen/q23_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q24_screen/q24_screen.dart';
@@ -21,6 +19,8 @@ import '../screens/Q5-9/q5_screen.dart';
 import '../screens/Q5-9/q6_screen.dart';
 import '../screens/Q5-9/q7_screen.dart';
 import '../screens/Q5-9/q8_screen.dart';
+import '../screens/Q18-21/q18_screen.dart';
+import '../screens/Q18-21/q20_screen.dart';
 import '../screens/q30_screen/q30_1_screen.dart';
 
 
@@ -37,7 +37,7 @@ class AppRoutes {
   static const String q10Screen = '/q10_screen';
   static const String q14Screen = '/q14_screen';
   static const String q18Screen = '/q18_screen';
-  static const String q19Screen = '/q19_screen';
+  static const String q20Screen = '/q20_screen';
   static const String q22Screen = '/q22_screen';
   static const String q23Screen = '/q23_screen';
   static const String q24Screen = '/q24_screen';
@@ -64,7 +64,7 @@ class AppRoutes {
     q10Screen: (context) => Q10Screen(),
     q14Screen: (context) => Q14Screen(),
     q18Screen: (context) => Q18Screen(),
-    q19Screen: (context) => Q19Screen(),
+    q20Screen: (context) => Q20Screen(),
     q22Screen: (context) => Q22Screen(),
     q23Screen: (context) => Q23Screen(),
     q24Screen: (context) => Q24Screen(),

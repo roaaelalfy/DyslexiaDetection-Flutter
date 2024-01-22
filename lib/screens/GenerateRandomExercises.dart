@@ -33,6 +33,7 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
 
   Future<void> _initTts() async {
     await flutterTts.setLanguage("en-US");
+    await flutterTts.setSpeechRate(0.2);
   }
 
   @override
@@ -113,8 +114,8 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
 
     // Speak the random letter
     try {
-      await flutterTts.speak(randomletter);
-      print("104");
+      await flutterTts.speak("Choose  "+randomletter);
+
     } catch (e) {
       print("TTS Error: $e");
     }

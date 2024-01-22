@@ -1,5 +1,8 @@
+import 'dart:core';
+import 'dart:math';
 import 'package:dyslexiadetectorapp/core/app_export.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class Q27Screen extends StatefulWidget {
   const Q27Screen({Key? key}) : super(key: key);
@@ -9,8 +12,32 @@ class Q27Screen extends StatefulWidget {
 }
 
 class _Q27ScreenState extends State<Q27Screen> {
-  List<String> pressedLetters = [];
-  String correctWord="bird";
+  List<String> words = ['bird', 'potatoes', 'bread', 'vegetable', 'education','break'];
+  late String selectedWord;
+  late List<String> shuffledLetters;
+
+  late List<String> pressedLetters = [];
+  late String correctWord= selectedWord;
+  FlutterTts flutterTts = FlutterTts();
+
+  @override
+  void initState() {
+    super.initState();
+    _initTts();
+    separateAndShuffleLetters();
+    loadLetterSound();
+  }
+
+  Future<void> _initTts() async {
+    await flutterTts.setLanguage("en-US");
+    await flutterTts.setSpeechRate(0.2);
+  }
+
+  @override
+  void dispose() {
+    flutterTts.stop(); // Stop TTS when disposing the widget
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +74,8 @@ class _Q27ScreenState extends State<Q27Screen> {
             Wrap(
               alignment: WrapAlignment.center,
               children: [
-                _buildContainer(context, "d"),
-                _buildContainer(context, "r"),
-                _buildContainer(context, "b"),
-                _buildContainer(context, "i"),
+                for (String letter in shuffledLetters)
+                  _buildContainer(context, letter),
               ],
             ),
             SizedBox(height: 1.v),
@@ -63,6 +88,7 @@ class _Q27ScreenState extends State<Q27Screen> {
   Widget _buildContainer(BuildContext context, String text) {
     return GestureDetector(
       onTap: () {
+        shuffledLetters.remove(text);
         setState(() {
           pressedLetters.add(text);
           if(pressedLetters.length==correctWord.length){
@@ -85,5 +111,19 @@ class _Q27ScreenState extends State<Q27Screen> {
         ),
       ),
     );
+  }
+  void separateAndShuffleLetters() {
+    selectedWord = words[Random().nextInt(words.length)];
+    shuffledLetters = selectedWord.split('')..shuffle();
+  }
+
+  Future<void> loadLetterSound() async{
+    try {
+      await flutterTts.speak("Rearrange the letters to form a word ");
+
+    } catch (e) {
+      print("TTS Error: $e");
+    }
+
   }
 }
