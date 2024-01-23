@@ -1,35 +1,42 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:dyslexiadetectorapp/core/app_export.dart';
+import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'dart:async';
 import 'dart:math';
 
-import 'package:flutter_tts/flutter_tts.dart';
-
 class DyslexiaExerciseWidget extends StatefulWidget {
-  final List<String> letters;
   final int gridSize;
-  final bool randomizeList;
-  //final void Function() onTapFunction;
 
-  DyslexiaExerciseWidget({required this.letters, required this.gridSize, required this.randomizeList});
+  DyslexiaExerciseWidget({required this.gridSize});
 
   @override
   State<DyslexiaExerciseWidget> createState() => _DyslexiaExerciseWidgetState();
 }
 
 class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
-  late List<String> exerciseletters;
-  late String? randomletter=null;
-  FlutterTts flutterTts = FlutterTts();
+  List<String>? exerciseLetters;
+  static bool playedSound = false;
+  static String? randomLetter;
+  late FlutterTts flutterTts;
+  late Timer _timer;
+  Random random = Random();
+  int _timerCount = 25;  // Initial timer count in seconds
+  static double progressPercentage = 1.0;
+  static bool timerStarted = false;
 
   @override
   void initState() {
     super.initState();
-    widget.randomizeList ?
-    exerciseletters = generateExercise(widget.letters,widget.gridSize):
-    exerciseletters = widget.letters..shuffle();
-    _initTts();
-    loadLetterSound(randomletter!);
+    flutterTts = FlutterTts();
+    _initExercise();
+
+    // start timer after the sound is played to start the test
+    print("timerStarted $timerStarted");
+    if (timerStarted== false) {
+      _startTimer();
+    }
   }
 
   Future<void> _initTts() async {
@@ -37,46 +44,83 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
     await flutterTts.setSpeechRate(0.2);
   }
 
+  Future<void> _initExercise() async {
+    randomLetter ??= String.fromCharCode(random.nextInt(26) + 'a'.codeUnitAt(0));
+    print("playedSound: $playedSound");
+    // ensures the sound is played only once at the beginning of the exercise
+    if (!playedSound) {
+      await _initTts();
+      await loadLetterSound(randomLetter!);
+    }
+    exerciseLetters = generateExercise(widget.gridSize);
+  }
+
   @override
   void dispose() {
-    flutterTts.stop(); // Stop TTS when disposing the widget
+    flutterTts.stop();
     super.dispose();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      print("Counter: $_timerCount percentage: $progressPercentage");
+      if (_timerCount > 0) {
+        setState(() {
+          _timerCount--;
+          progressPercentage= _timerCount/25.0;
+          timerStarted = true;
+        });
+      } else {
+        // Timer is over, navigate to the next screen
+        _timer.cancel();  // to restart timer in the new screen
+        randomLetter = null;
+        playedSound = false;
+        timerStarted = false;
+        Navigator.pushReplacementNamed(context, AppRoutes.q3Screen);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-
-    double horizontalPadding = width * 0.22;
-    double verticalPadding = height * 0.02;
-    double cardSize = min(width, height) * 0.9;
+    exerciseLetters ??= generateExercise(widget.gridSize);
 
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
-        child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: widget.gridSize,
-            childAspectRatio: 1.05,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 220.h, vertical: 70.v),
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: widget.gridSize,
+                  childAspectRatio: 1.05,
+                ),
+                itemCount: exerciseLetters!.length,
+                itemBuilder: (context, index) {
+                  return _buildGridTile(exerciseLetters![index]);
+                },
+              ),
+            ),
           ),
-          itemCount: exerciseletters.length,
-          itemBuilder: (context, index) {
-            return _buildGridTile(exerciseletters[index],cardSize);
-          },
-        ),
+          LinearPercentIndicator(       // Linear progress bar
+            width: MediaQuery.of(context).size.width,
+            lineHeight: 5.0,
+            percent: progressPercentage,  // Calculate the percentage based on timer count
+            backgroundColor: Colors.white,
+            progressColor: Colors.blue,
+          ),
+        ],
       ),
     );
-
   }
 
-  Widget _buildGridTile(String letter,cardSize) {
+  Widget _buildGridTile(String letter) {
     return GestureDetector(
       child: Card(
         elevation: 6,
         child: Container(
-          width: cardSize,
-          height: cardSize,
           child: Center(
             child: Text(
               letter,
@@ -85,49 +129,30 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
           ),
         ),
       ),
-      onTap: (){
-        setState(() {
-          generateExercise(exerciseletters,widget.gridSize);
-        });
-        // Save selected letter
-        // navigate to next screen
+      onTap: () {
+        // save the # clicks , misses , hits then reload the screen
+        Navigator.pushNamed(context, AppRoutes.q2Screen);
       },
     );
   }
 
-  List<String> generateExercise(List<String>letters ,int gridSize) {
-    List<String> exerciseLetters = [];
-    Random random = Random();
+  List<String> generateExercise(int gridSize) {
+    List<String> myExerciseLetters = [];
+    myExerciseLetters.add(randomLetter!);
 
-    if(randomletter==null)
-    {
-      int randomletterIndex = random.nextInt(letters.length);
-      randomletter = letters[randomletterIndex];
-
-      for (int i = 0; i < gridSize * gridSize; i++) {
-        int randomIndex= random.nextInt(letters.length);
-        exerciseLetters.add(letters[randomIndex]);
-      }
+    for (int i = 0; i < gridSize * gridSize - 1; i++) {
+      myExerciseLetters.add(String.fromCharCode(random.nextInt(26) + 'a'.codeUnitAt(0)));
     }
-    else if(randomletter!=null)
-    {
-      exerciseLetters.add(randomletter!);
-      for (int i = 0; i < gridSize * gridSize-1; i++) {
-        int randomIndex= random.nextInt(letters.length);
-        exerciseLetters.add(letters[randomIndex]);
-      }
-    }
-    exerciseLetters.shuffle();
-    return exerciseLetters;
+    myExerciseLetters.shuffle();
+    return myExerciseLetters;
   }
 
-  Future<void> loadLetterSound(String randomletter) async{
+  Future<void> loadLetterSound(String _randomLetter) async {
     try {
-      await flutterTts.speak("Choose  "+randomletter!);
-
+      await flutterTts.speak("Choose $_randomLetter");
+      playedSound = true;
     } catch (e) {
       print("TTS Error: $e");
     }
-
   }
 }

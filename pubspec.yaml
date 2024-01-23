@@ -14,7 +14,9 @@ dependencies:
   audioplayers: ^5.2.1
   just_audio: ^0.9.36
   flutter_tts: ^3.8.5
+  percent_indicator: ^4.0.1
   english_words: ^4.0.0
+  linear_timer: ^2.0.0
 
 dev_dependencies: 
   flutter_test: 
