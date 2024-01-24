@@ -1,8 +1,7 @@
 import 'dart:math';
-import 'package:dyslexiadetectorapp/core/app_export.dart';
-import 'package:dyslexiadetectorapp/widgets/3x3Matrix.dart';
 import 'package:flutter/material.dart';
 
+import '../../routes/app_routes.dart';
 import '../GenerateRandomExercises.dart';
 
 class Q20Screen extends StatelessWidget {
@@ -20,6 +19,8 @@ class Q20Screen extends StatelessWidget {
           letters: generateExercise(Q2021NonWordsLists),
           gridSize: 3,
           randomizeList: true,
+          onTapFunction: (BuildContext context) { Navigator.pushNamed(context, AppRoutes.q20Screen);},
+          navigateToNextScreen: (BuildContext context) {Navigator.pushNamed(context, AppRoutes.q21Screen); },
         )
     );
   }

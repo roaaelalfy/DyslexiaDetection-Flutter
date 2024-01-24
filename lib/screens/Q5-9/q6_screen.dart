@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
+import '../../routes/app_routes.dart';
 import '../GenerateRandomExercises.dart';
 
 class Q6Screen extends StatelessWidget {
@@ -17,6 +18,8 @@ class Q6Screen extends StatelessWidget {
           letters: generateExercise(Q6LettersLists),
           gridSize: 6,
           randomizeList: true,
+          onTapFunction: (BuildContext context) { Navigator.pushNamed(context, AppRoutes.q6Screen);},
+          navigateToNextScreen: (BuildContext context) {Navigator.pushNamed(context, AppRoutes.q7Screen); },
         )
     );
   }

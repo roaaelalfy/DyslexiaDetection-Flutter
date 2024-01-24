@@ -1,4 +1,3 @@
-import 'package:dyslexiadetectorapp/core/app_export.dart';
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -8,20 +7,24 @@ import 'dart:math';
 
 class DyslexiaExerciseWidget extends StatefulWidget {
   final int gridSize;
+  final void Function(BuildContext context) onTapFunction;
+  final void Function(BuildContext context) navigateToNextScreen;
 
-  DyslexiaExerciseWidget({required this.gridSize});
+  DyslexiaExerciseWidget({required this.gridSize, required this.onTapFunction, required this.navigateToNextScreen});
 
   @override
   State<DyslexiaExerciseWidget> createState() => _DyslexiaExerciseWidgetState();
 }
 
 class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
-  List<String>? exerciseLetters;
-  static bool playedSound = false;
-  static String? randomLetter;
-  late FlutterTts flutterTts;
-  late Timer _timer;
+  late List<String> exerciseLetters;
   Random random = Random();
+  static String? randomLetter;
+
+  late FlutterTts flutterTts;
+  static bool playedSound = false;
+
+  late Timer _timer;
   int _timerCount = 25;  // Initial timer count in seconds
   static double progressPercentage = 1.0;
   static bool timerStarted = false;
@@ -29,7 +32,6 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   @override
   void initState() {
     super.initState();
-    flutterTts = FlutterTts();
     _initExercise();
 
     // start timer after the sound is played to start the test
@@ -76,15 +78,13 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
         randomLetter = null;
         playedSound = false;
         timerStarted = false;
-        Navigator.pushReplacementNamed(context, AppRoutes.q3Screen);
+        widget.navigateToNextScreen(context);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    exerciseLetters ??= generateExercise(widget.gridSize);
-
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -131,7 +131,7 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
       ),
       onTap: () {
         // save the # clicks , misses , hits then reload the screen
-        Navigator.pushNamed(context, AppRoutes.q2Screen);
+        widget.onTapFunction(context);
       },
     );
   }

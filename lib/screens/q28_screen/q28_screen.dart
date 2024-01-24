@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:core';
 import 'dart:math';
 import 'package:dyslexiadetectorapp/core/app_export.dart';
-import 'package:english_words/english_words.dart';
+import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class Q28Screen extends StatefulWidget {
   const Q28Screen({Key? key}) : super(key: key);
@@ -13,27 +15,76 @@ class Q28Screen extends StatefulWidget {
 }
 
 class _Q28ScreenState extends State<Q28Screen> {
-  List<String> words = ['beautiful', 'diamond', 'enemy', 'computer', 'dinosaur','biography','mysterious'];
-  List<String> wordSyllables = ['beau ti ful', 'di a mond', 'en em y', 'com pu ter', 'di no saur','bi o graph y','my ste ri ous'];
+  List<String> words = [
+    'beautiful',
+    'diamond',
+    'enemy',
+    'computer',
+    'dinosaur',
+    'biography',
+    'mysterious'
+  ];
+  List<String> wordSyllables = [
+    'beau ti ful',
+    'di a mond',
+    'en em y',
+    'com pu ter',
+    'di no saur',
+    'bi o graph y',
+    'my ste ri ous'
+  ];
   late String selectedWord;
   late List<String> shuffledSyllables;
   late int syllablesCount;
 
   late List<String> pressedLetters = [];
-  late String correctWord= selectedWord;
+  late String correctWord = selectedWord;
   FlutterTts flutterTts = FlutterTts();
+
+  late Timer _timer;
+  int _timerCount = 25; // Initial timer count in seconds
+  static double progressPercentage = 1.0;
+  static bool timerStarted = false;
 
   @override
   void initState() {
     super.initState();
-    _initTts();
-    separateAndShuffleLetters();
-    loadLetterSound();
+    _initExercise();
+
+    // start timer after the sound is played to start the test
+    print("timerStarted $timerStarted");
+    if (timerStarted == false) {
+      _startTimer();
+    }
   }
 
   Future<void> _initTts() async {
     await flutterTts.setLanguage("en-US");
     await flutterTts.setSpeechRate(0.4);
+  }
+
+  Future<void> _initExercise() async {
+    _initTts();
+    loadSound();
+    separateAndShuffleLetters();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      print("Counter: $_timerCount percentage: $progressPercentage");
+      if (_timerCount > 0) {
+        setState(() {
+          _timerCount--;
+          progressPercentage = _timerCount / 25.0;
+          timerStarted = true;
+        });
+      } else {
+        // Timer is over, navigate to the next screen
+        _timer.cancel(); // to restart timer in the new screen
+        timerStarted = false;
+        Navigator.pushNamed(context, AppRoutes.q28Screen);
+      }
+    });
   }
 
   @override
@@ -81,7 +132,13 @@ class _Q28ScreenState extends State<Q28Screen> {
                   _buildContainer(context, letter),
               ],
             ),
-            SizedBox(height: 1.v),
+            LinearPercentIndicator(       // Linear progress bar
+              width: MediaQuery.of(context).size.width,
+              lineHeight: 5.0,
+              percent: progressPercentage,  // Calculate the percentage based on timer count
+              backgroundColor: Colors.white,
+              progressColor: Colors.blue,
+            ),
           ],
         ),
       ),
@@ -94,7 +151,7 @@ class _Q28ScreenState extends State<Q28Screen> {
         shuffledSyllables.remove(text);
         setState(() {
           pressedLetters.add(text);
-          if(pressedLetters.length==syllablesCount){
+          if (pressedLetters.length == syllablesCount) {
             Navigator.pushNamed(context, AppRoutes.q28Screen);
           }
         });
@@ -115,20 +172,20 @@ class _Q28ScreenState extends State<Q28Screen> {
       ),
     );
   }
+
   void separateAndShuffleLetters() {
     selectedWord = words[Random().nextInt(words.length)];
     int syllablesListIndex = words.indexOf(selectedWord);
-    shuffledSyllables = wordSyllables[syllablesListIndex].split(' ')..shuffle();
-    syllablesCount= shuffledSyllables.length;
+    shuffledSyllables = wordSyllables[syllablesListIndex].split(' ')
+      ..shuffle();
+    syllablesCount = shuffledSyllables.length;
   }
 
-  Future<void> loadLetterSound() async{
+  Future<void> loadSound() async {
     try {
       await flutterTts.speak("Rearrange to form a word ");
-
     } catch (e) {
       print("TTS Error: $e");
     }
-
   }
 }
