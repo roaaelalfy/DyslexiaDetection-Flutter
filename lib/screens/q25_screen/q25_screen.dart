@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:dyslexiadetectorapp/core/app_export.dart';
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class Q25Screen extends StatefulWidget {
   const Q25Screen({Key? key}) : super(key: key);
@@ -19,24 +22,59 @@ class _Q25ScreenState extends State<Q25Screen> {
   };
   late List<bool> clickedStatus;
   late List<String> exerciseWords;
-  FlutterTts flutterTts = FlutterTts();
+  late FlutterTts flutterTts =FlutterTts();
+  late Timer _timer;
+  int _timerCount = 25;  // Initial timer count in seconds
+  static double progressPercentage = 1.0;
+  static bool timerStarted = false;
 
   @override
   void initState() {
     super.initState();
-    exerciseWords = generateExercise(Q25Map);
-    _initTts();
-    loadSound();
-  }
-  @override
-  void dispose() {
-    flutterTts.stop();
-    super.dispose();
+    exerciseWords=[];
+    _initExercise();
+
+    // start timer after the sound is played to start the test
+    print("timerStarted $timerStarted");
+    if (timerStarted== false) {
+      _startTimer();
+    }
   }
 
   Future<void> _initTts() async {
     await flutterTts.setLanguage("en-US");
     await flutterTts.setSpeechRate(0.2);
+  }
+
+  Future<void> _initExercise() async {
+      await _initTts();
+      await loadSound("Find the wrong word.");
+      exerciseWords = generateExercise(Q25Map);
+    }
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      print("Counter: $_timerCount percentage: $progressPercentage");
+      if (_timerCount > 0) {
+        setState(() {
+          _timerCount--;
+          progressPercentage= _timerCount/25.0;
+          timerStarted = true;
+        });
+      } else {
+        // Timer is over, navigate to the next screen
+        _timer.cancel();  // to restart timer in the new screen
+        timerStarted = false;
+      }
+    });
+  }
+
+
+  @override
+  void dispose() {
+    flutterTts.stop();
+    _timer.cancel();
+    timerStarted=false;
+    super.dispose();
   }
 
   @override
@@ -47,14 +85,23 @@ class _Q25ScreenState extends State<Q25Screen> {
         padding: EdgeInsets.symmetric(horizontal: 22.h),
         child: buildSentence(context),
       ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.transparent,
+        child:LinearPercentIndicator(
+          width: 300,
+          lineHeight: 5.0,
+          percent: progressPercentage,
+          backgroundColor: Colors.white,
+          progressColor: Colors.blue,
+        ),
+      ),
     );
   }
 
   Widget buildSentence(BuildContext context) {
     return Container(
       width: 349.h,
-      padding: EdgeInsets.symmetric(horizontal: 5.h, vertical: 30.v),
-      decoration: AppDecoration.outlineLightblue100,
+      padding: EdgeInsets.symmetric(horizontal: 5.h, vertical: 100.v),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -98,17 +145,18 @@ class _Q25ScreenState extends State<Q25Screen> {
 
   //Choose random list to generate exercise
   List<String> generateExercise(Map<String, List<String>> map) {
+    List<String> myExercise =[];
     // Choose a random key from the map
     List<String> randomKey = map.keys.toList()..shuffle();
     String selectedKey = randomKey.first;
-    exerciseWords = map[selectedKey]!;
+    myExercise = map[selectedKey]!;
 
-    clickedStatus = List.generate(exerciseWords.length, (index) => false);
-    return exerciseWords;
+    clickedStatus = List.generate(myExercise.length, (index) => false);
+    return myExercise;
   }
-  Future<void> loadSound() async {
+  Future<void> loadSound(String text) async {
     try {
-      await flutterTts.speak("Find the wrong word.");
+      await flutterTts.speak(text);
     } catch (e) {
       print("TTS Error: $e");
     }

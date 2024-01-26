@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import '../../routes/app_routes.dart';
 import '../GenerateRandomExercises.dart';
 
 class Q12Screen extends StatelessWidget {
@@ -11,13 +12,13 @@ class Q12Screen extends StatelessWidget {
       "read" , "red" , "cheat" , "chase",  "meat",
       "neat" , "chase" , "chase" , "dress" , "shade",
       "red" , "check" , "read" , "chase" , "net",
-      "neat" , "shade" , "red" , "cheet" , "shade"
+      "neat" , "shade" , "red" , "cheat" , "shade"
     ],
-    ["caught" , "cough" , "dough" ,"boat" , "gloat",
-      "brought" , "note" , "caught" , "choose",  "loose",
-      "moose" , "rough" , "rogue" , "note" , "suit",
-      "boot" , "brought" , "taught" , "choose" , "nose",
-      "note" , "cough" , "moose" , "rough" , "tough"
+    ["coat" , "cough" , "dough" ,"boat" , "gloat",
+      "shoot" , "note" , "caught" , "chose",  "loose",
+      "mose" , "rough" , "rogue" , "note" , "suit",
+      "boot" , "road" , "taught" , "chose" , "nose",
+      "note" , "cough" , "mose" , "rough" , "tough"
     ],
   ];
 
@@ -27,7 +28,8 @@ class Q12Screen extends StatelessWidget {
         body: DyslexiaExerciseWidget(
           letters: generateExercise(Q12List),
           gridSize: 5,
-          randomizeList: false,
+          onTapFunction: (BuildContext context) { Navigator.pushNamed(context, AppRoutes.q12Screen);},
+          navigateToNextScreen: (BuildContext context) {Navigator.pushNamed(context, AppRoutes.q13Screen); },
         )
     );
   }

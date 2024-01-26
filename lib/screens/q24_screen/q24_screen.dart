@@ -2,6 +2,8 @@ import 'package:dyslexiadetectorapp/core/app_export.dart';
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'dart:async';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class Q24Screen extends StatefulWidget {
   const Q24Screen({Key? key}) : super(key: key);
@@ -18,19 +20,50 @@ class _Q24ScreenState extends State<Q24Screen> {
     "net":['You','must','get','your','neat','for','fishing.'],
   };
   late List<bool> clickedStatus;
+  late String randomKey;
   late List<String> exerciseWords;
   FlutterTts flutterTts = FlutterTts();
+  static bool playedSound = false;
+  late Timer _timer;
+  int _timerCount = 25;  // Initial timer count in seconds
+  static double progressPercentage = 1.0;
+  static bool timerStarted = false;
 
   @override
   void initState() {
     super.initState();
     exerciseWords = generateExercise(Q24Map);
-    _initTts();
-    loadSound();
+    if(!playedSound){
+      _initTts();
+      loadSound();
+    }
+    print("timerStarted $timerStarted");
+    if (timerStarted== false) {
+      _startTimer();
+    }
+  }
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      print("Counter: $_timerCount percentage: $progressPercentage");
+      if (_timerCount > 0) {
+        setState(() {
+          _timerCount--;
+          progressPercentage= _timerCount/25.0;
+          timerStarted = true;
+        });
+      } else {
+        // Timer is over, navigate to the next screen
+        _timer.cancel();  // to restart timer in the new screen
+        playedSound = false;
+        timerStarted = false;
+        Navigator.pushNamed(context, AppRoutes.q25Screen);
+      }
+    });
   }
   @override
   void dispose() {
     flutterTts.stop();
+    _timer.cancel();
     super.dispose();
   }
 
@@ -45,32 +78,48 @@ class _Q24ScreenState extends State<Q24Screen> {
       body: Container(
         width: double.maxFinite,
         padding: EdgeInsets.symmetric(horizontal: 22.h),
-        child: buildSentence(context),
+        child: Column( // Wrap everything in a Column
+          children: [
+            buildSentence(context), // Add some spacing if needed
+           ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.transparent,
+        child:LinearPercentIndicator(
+          width: 300,
+          lineHeight: 5.0,
+          percent: progressPercentage,
+          backgroundColor: Colors.white,
+          progressColor: Colors.blue,
+        ),
       ),
     );
   }
 
+
   Widget buildSentence(BuildContext context) {
-    return Container(
-      width: 349.h,
-      padding: EdgeInsets.symmetric(horizontal: 5.h, vertical: 30.v),
-      decoration: AppDecoration.outlineLightblue100,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(height: 2.v),
-          Container(
-            width: 326.h,
-            margin: EdgeInsets.only(right: 8.h),
-            child: Wrap(
-              spacing: 8.h,
-              children: List.generate(
-                exerciseWords.length,
-                (index) => _buildWord(context, exerciseWords[index], index),
+    return Center(
+      child: Container(
+        width: 349.h,
+        padding: EdgeInsets.symmetric(horizontal: 5.h, vertical: 100.v),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: 2.v),
+            Container(
+              width: 326.h,
+              margin: EdgeInsets.only(right: 8.h),
+              child: Wrap(
+                spacing: 8.h,
+                children: List.generate(
+                  exerciseWords.length,
+                  (index) => _buildWord(context, exerciseWords[index], index),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -80,7 +129,7 @@ class _Q24ScreenState extends State<Q24Screen> {
       onTap: () {
         setState(() {
           clickedStatus[index] = !clickedStatus[index];
-          // store the selected word then navigate
+          // store the selected word and Navigate
           Navigator.pushNamed(context, AppRoutes.q25Screen);
         });
       },
@@ -110,6 +159,7 @@ class _Q24ScreenState extends State<Q24Screen> {
   Future<void> loadSound() async {
     try {
       await flutterTts.speak("Find the wrong word.");
+      playedSound = true;
     } catch (e) {
       print("TTS Error: $e");
     }

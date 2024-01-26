@@ -13,18 +13,26 @@ import 'package:dyslexiadetectorapp/screens/q25_screen/q25_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q27_screen/q27_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q28_screen/q28_screen.dart';
 import 'package:dyslexiadetectorapp/screens/q30_screen/q30_screen.dart';
-import '../screens/Q1-4/q1_screen.dart';
 import '../screens/Q1-4/q2_screen.dart';
+import '../screens/Q1-4/q1_screen.dart';
+import '../screens/Q10-13/q11_screen.dart';
+import '../screens/Q10-13/q12_screen.dart';
+import '../screens/Q10-13/q13_screen.dart';
+import '../screens/Q14-17/q14_screen.dart';
+import '../screens/Q14-17/q15_screen.dart';
+import '../screens/Q14-17/q16_screen.dart';
+import '../screens/Q14-17/q17_screen.dart';
 import '../screens/Q1-4/q3_screen.dart';
 import '../screens/Q1-4/q4_screen.dart';
 import '../screens/Q10-13/q10_screen.dart';
-import '../screens/Q14-17/q14_screen.dart';
 import '../screens/Q5-9/q5_screen.dart';
 import '../screens/Q5-9/q6_screen.dart';
 import '../screens/Q5-9/q7_screen.dart';
 import '../screens/Q5-9/q8_screen.dart';
 import '../screens/Q18-21/q18_screen.dart';
+import '../screens/Q18-21/q19_screen.dart';
 import '../screens/Q18-21/q20_screen.dart';
+import '../screens/Q18-21/q21_screen.dart';
 import '../screens/q30_screen/q30_1_screen.dart';
 import '../screens/q31_screen/q31_screen.dart';
 import '../screens/q32_screen/q32_screen.dart';
@@ -45,9 +53,17 @@ class AppRoutes {
   static const String q8Screen = '/q8_screen';
   static const String q9Screen = '/q9_screen';
   static const String q10Screen = '/q10_screen';
+  static const String q11Screen = '/q11_screen';
+  static const String q12Screen = '/q12_screen';
+  static const String q13Screen = '/q13_screen';
   static const String q14Screen = '/q14_screen';
+  static const String q15Screen = '/q15_screen';
+  static const String q16Screen = '/q16_screen';
+  static const String q17Screen = '/q17_screen';
   static const String q18Screen = '/q18_screen';
+  static const String q19Screen = '/q19_screen';
   static const String q20Screen = '/q20_screen';
+  static const String q21Screen = '/q21_screen';
   static const String q22Screen = '/q22_screen';
   static const String q23Screen = '/q23_screen';
   static const String q24Screen = '/q24_screen';
@@ -77,9 +93,17 @@ class AppRoutes {
     q8Screen: (context) => Q8Screen(),
     q9Screen: (context) => Q9Screen(),
     q10Screen: (context) => Q10Screen(),
+    q11Screen: (context) => Q11Screen(),
+    q12Screen: (context) => Q12Screen(),
+    q13Screen: (context) => Q13Screen(),
     q14Screen: (context) => Q14Screen(),
+    q15Screen: (context) => Q15Screen(),
+    q16Screen: (context) => Q16Screen(),
+    q17Screen: (context) => Q17Screen(),
     q18Screen: (context) => Q18Screen(),
+    q19Screen: (context) => Q19Screen(),
     q20Screen: (context) => Q20Screen(),
+    q21Screen: (context) => Q21Screen(),
     q22Screen: (context) => Q22Screen(),
     q23Screen: (context) => Q23Screen(),
     q24Screen: (context) => Q24Screen(),

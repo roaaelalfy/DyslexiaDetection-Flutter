@@ -1,11 +1,11 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
 
-import '../../routes/app_routes.dart';
+import 'package:dyslexiadetectorapp/core/app_export.dart';
+import 'package:flutter/material.dart';
 import '../GenerateRandomExercises.dart';
 
-class Q18Screen extends StatelessWidget {
-  Q18Screen({Key? key}): super(key: key,);
+class Q19Screen extends StatelessWidget {
+  Q19Screen({Key? key}): super(key: key,);
 
   List<List<String>> Q1819NonWordsLists = [
     ['matapa','madata','mapaba','damata','pamama','mamata'],
@@ -17,13 +17,12 @@ class Q18Screen extends StatelessWidget {
     return Scaffold(
         body: DyslexiaExerciseWidget(
           letters: generateExercise(Q1819NonWordsLists),
-          gridSize: 3,
-          onTapFunction: (BuildContext context) { Navigator.pushNamed(context, AppRoutes.q18Screen);},
-          navigateToNextScreen: (BuildContext context) {Navigator.pushNamed(context, AppRoutes.q19Screen); },
+          gridSize: 5,
+          onTapFunction: (BuildContext context) { Navigator.pushNamed(context, AppRoutes.q19Screen);},
+          navigateToNextScreen: (BuildContext context) {Navigator.pushNamed(context, AppRoutes.q20Screen); },
         )
     );
   }
-
 
   List<String> generateExercise(List<List<String>> nonWords) {
     List<String> exerciseNonWords = [];
@@ -36,5 +35,6 @@ class Q18Screen extends StatelessWidget {
     exerciseNonWords.shuffle();
     return exerciseNonWords;
   }
+
 
 }

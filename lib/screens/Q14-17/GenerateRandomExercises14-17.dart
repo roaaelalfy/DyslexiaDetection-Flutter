@@ -1,36 +1,29 @@
-import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
-import 'package:flutter/material.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:async';
 import 'dart:math';
+import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class DyslexiaExerciseWidget extends StatefulWidget {
   final int gridSize;
-  final int currentScreen;  //Q1 = 1    click + 1    => click1
   final void Function(BuildContext context) onTapFunction;
   final void Function(BuildContext context) navigateToNextScreen;
 
-  DyslexiaExerciseWidget({required this.gridSize, required this.onTapFunction, required this.navigateToNextScreen, required this.currentScreen});
-
-  // performance measures
-  static int clicks =0;
-  static int hits =0;
-  static int misses =0;
-  static int score =0;
-  static double accuracy =0;
-  static double missrate =0;
+  DyslexiaExerciseWidget({
+    required this.gridSize,
+    required this.onTapFunction,
+    required this.navigateToNextScreen,});
 
   @override
-  State<DyslexiaExerciseWidget> createState() => _DyslexiaExerciseWidgetState();
-}
+  State<DyslexiaExerciseWidget> createState() => _DyslexiaExerciseWidgetState();}
+
 
 class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
-  late List<String> exerciseLetters;
+  late List<String> exerciseletters;
   Random random = Random();
-  static String? randomLetter;
 
-  late FlutterTts flutterTts = FlutterTts();
+  late FlutterTts flutterTts =FlutterTts();
   static bool playedSound = false;
 
   late Timer _timer;
@@ -38,10 +31,33 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   static double progressPercentage = 1.0;
   static bool timerStarted = false;
 
+  static Map<String, List<String>> Q14To17Map = {
+    "F": List.filled(12, 'E') + ['F'] + List.filled(12, 'E'),
+    "E": List.filled(12, 'F') + ['E'] + List.filled(12, 'F'),
+    "p": List.filled(12, 'q') + ['p'] + List.filled(12, 'q'),
+    "b": List.filled(12, 'p') + ['b'] + List.filled(12, 'p'),
+    "u": List.filled(12, 'n') + ['u'] + List.filled(12, 'n'),
+    "n": List.filled(12, 'u') + ['n'] + List.filled(12, 'u'),
+    "h": List.filled(12, 'n') + ['h'] + List.filled(12, 'n'),
+    "d": List.filled(12, 'b') + ['d'] + List.filled(12, 'b'),
+    "e": List.filled(12, 'a') + ['e'] + List.filled(12, 'a'),
+    "i": List.filled(12, 'j') + ['i'] + List.filled(12, 'j'),
+    "M": List.filled(12, 'W') + ['M'] + List.filled(12, 'W'),
+    "q": List.filled(12, 'g') + ['q'] + List.filled(12, 'g'),
+    "l": List.filled(12, 'i') + ['l'] + List.filled(12, 'i'),
+    "K": List.filled(12, 'X') + ['K'] + List.filled(12, 'X'),
+    "c": List.filled(12, 'o') + ['c'] + List.filled(12, 'o'),
+    "j": List.filled(12, 'i') + ['j'] + List.filled(12, 'i'),
+    "g": List.filled(12, 'j') + ['g'] + List.filled(12, 'j'),
+    "a": List.filled(12, 'e') + ['a'] + List.filled(12, 'e'),
+    "O": List.filled(12, 'Q') + ['O'] + List.filled(12, 'Q'),
+    "t": List.filled(12, 'f') + ['t'] + List.filled(12, 'f'),
+    "A": List.filled(12, 'V') + ['A'] + List.filled(12, 'V'),
+  };
   @override
   void initState() {
     super.initState();
-    exerciseLetters=[];
+    exerciseletters=[];
     _initExercise();
 
     // start timer after the sound is played to start the test
@@ -50,29 +66,26 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
       _startTimer();
     }
   }
-
   Future<void> _initTts() async {
     await flutterTts.setLanguage("en-US");
     await flutterTts.setSpeechRate(0.2);
   }
 
   Future<void> _initExercise() async {
-    randomLetter ??= String.fromCharCode(random.nextInt(26) + 'a'.codeUnitAt(0));
     print("playedSound: $playedSound");
     // ensures the sound is played only once at the beginning of the exercise
     if (!playedSound) {
       await _initTts();
-      await loadLetterSound(randomLetter!);
+      await loadLetterSound("Choose the different letter.");
     }
-    exerciseLetters = generateExercise(widget.gridSize);
+    exerciseletters= generateExercise(Q14To17Map);
   }
 
   @override
   void dispose() {
-    flutterTts.stop();
+    flutterTts.stop(); // Stop TTS when disposing the widget
     super.dispose();
   }
-
   void _startTimer() {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       print("Counter: $_timerCount percentage: $progressPercentage");
@@ -85,13 +98,8 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
       } else {
         // Timer is over, navigate to the next screen
         _timer.cancel();  // to restart timer in the new screen
-        randomLetter = null;
         playedSound = false;
         timerStarted = false;
-        // calculate missrate ,score, accuracy and update database.
-        DyslexiaExerciseWidget.missrate = DyslexiaExerciseWidget.misses / DyslexiaExerciseWidget.clicks;
-        DyslexiaExerciseWidget.accuracy = DyslexiaExerciseWidget.hits / DyslexiaExerciseWidget.clicks;
-        DyslexiaExerciseWidget.score = DyslexiaExerciseWidget.hits;
         widget.navigateToNextScreen(context);
       }
     });
@@ -111,9 +119,9 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
                   crossAxisCount: widget.gridSize,
                   childAspectRatio: 1.05,
                 ),
-                itemCount: exerciseLetters.length,
+                itemCount: exerciseletters.length,
                 itemBuilder: (context, index) {
-                  return _buildGridTile(exerciseLetters[index]);
+                  return _buildGridTile(exerciseletters[index]);
                 },
               ),
             ),
@@ -128,6 +136,7 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
         ],
       ),
     );
+
   }
 
   Widget _buildGridTile(String letter) {
@@ -143,44 +152,28 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
           ),
         ),
       ),
-      onTap: () {
+      onTap: (){
         // save the # clicks , misses , hits then reload the screen
-        DyslexiaExerciseWidget.clicks++;
-        if(letter == randomLetter){
-          DyslexiaExerciseWidget.hits++;
-        }else{
-          DyslexiaExerciseWidget.misses++;
-        }
         widget.onTapFunction(context);
       },
     );
   }
 
-  List<String> generateExercise(int gridSize) {
-    List<String> myExerciseLetters = [];
-    myExerciseLetters.add(randomLetter!);
+  List<String> generateExercise(Map<String, List<String>> map) {
+    // Choose a random key from the map
+    List<String> randomKey = map.keys.toList()..shuffle();
+    String selectedKey = randomKey.first;
+    exerciseletters = map[selectedKey]!;
+    exerciseletters.shuffle();
+    // remove after picked to avoid repetition
+    map.remove(selectedKey);
 
-    //add distractors that are similar in phonology and orthography as the random letter.
-    if(randomLetter =='b'){
-      myExerciseLetters = List.filled(9, 'd') + List.filled(9, 'p') + List.filled(6, 'q');
-    } else if(randomLetter =='a'){
-      myExerciseLetters = List.filled(3, 'a')+ List.filled(3, 'u') + List.filled(12, 'e') + List.filled(6, 'i');
-    }else if(randomLetter =='n'){
-      myExerciseLetters = List.filled(6, 'h')+ List.filled(12, 'u') + List.filled(6, 'm');
-    }
-    // generate random letters
-    else{
-      for (int i = 0; i < gridSize * gridSize - 1; i++) {
-        myExerciseLetters.add(String.fromCharCode(random.nextInt(26) + 'a'.codeUnitAt(0)));
-      }
-    }
-    myExerciseLetters.shuffle();
-    return myExerciseLetters;
+    return exerciseletters;
   }
 
-  Future<void> loadLetterSound(String _randomLetter) async {
+  Future<void> loadLetterSound(String text) async{
     try {
-      await flutterTts.speak("Choose $_randomLetter");
+      await flutterTts.speak(text);
       playedSound = true;
     } catch (e) {
       print("TTS Error: $e");

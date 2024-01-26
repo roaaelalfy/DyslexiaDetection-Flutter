@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:core';
 import 'dart:math';
 import 'package:dyslexiadetectorapp/core/app_export.dart';
+import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class Q27Screen extends StatefulWidget {
   const Q27Screen({Key? key}) : super(key: key);
@@ -19,13 +22,23 @@ class _Q27ScreenState extends State<Q27Screen> {
   late List<String> pressedLetters = [];
   late String correctWord= selectedWord;
   FlutterTts flutterTts = FlutterTts();
+  static bool playedSound = false;
+
+  late Timer _timer;
+  int _timerCount = 25;  // Initial timer count in seconds
+  static double progressPercentage = 1.0;
+  static bool timerStarted = false;
 
   @override
   void initState() {
     super.initState();
-    _initTts();
-    separateAndShuffleLetters();
-    loadLetterSound();
+    _initExercise();
+
+    // start timer after the sound is played to start the test
+    print("timerStarted $timerStarted");
+    if (timerStarted== false) {
+      _startTimer();
+    }
   }
 
   Future<void> _initTts() async {
@@ -33,12 +46,38 @@ class _Q27ScreenState extends State<Q27Screen> {
     await flutterTts.setSpeechRate(0.2);
   }
 
+  Future<void> _initExercise() async {
+    _initTts();
+    if(!playedSound) {
+      loadSound();
+    }
+    separateAndShuffleLetters();
+  }
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      print("Counter: $_timerCount percentage: $progressPercentage");
+      if (_timerCount > 0) {
+        setState(() {
+          _timerCount--;
+          progressPercentage= _timerCount/25.0;
+          timerStarted = true;
+        });
+      } else {
+        // Timer is over, navigate to the next screen
+        _timer.cancel();  // to restart timer in the new screen
+        timerStarted = false;
+        playedSound = false;
+        Navigator.pushNamed(context, AppRoutes.q28Screen);
+      }
+    });
+  }
   @override
   void dispose() {
-    flutterTts.stop(); // Stop TTS when disposing the widget
+    flutterTts.stop();
+    _timer.cancel();
+    playedSound = false;
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,8 +117,17 @@ class _Q27ScreenState extends State<Q27Screen> {
                   _buildContainer(context, letter),
               ],
             ),
-            SizedBox(height: 1.v),
           ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.transparent,
+        child:LinearPercentIndicator(
+          width: 300,
+          lineHeight: 5.0,
+          percent: progressPercentage,
+          backgroundColor: Colors.white,
+          progressColor: Colors.blue,
         ),
       ),
     );
@@ -92,7 +140,8 @@ class _Q27ScreenState extends State<Q27Screen> {
         setState(() {
           pressedLetters.add(text);
           if(pressedLetters.length==correctWord.length){
-            Navigator.pushNamed(context, AppRoutes.q28Screen);
+            // store written value then reload screen until timer is over
+            Navigator.pushNamed(context, AppRoutes.q27Screen);
             }
         });
       },
@@ -117,10 +166,10 @@ class _Q27ScreenState extends State<Q27Screen> {
     shuffledLetters = selectedWord.split('')..shuffle();
   }
 
-  Future<void> loadLetterSound() async{
+  Future<void> loadSound() async{
     try {
       await flutterTts.speak("Rearrange the letters to form a word ");
-
+      playedSound = true;
     } catch (e) {
       print("TTS Error: $e");
     }

@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:dyslexiadetectorapp/core/app_export.dart';
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class Q32Screen extends StatefulWidget {
   const Q32Screen({Key? key}) : super(key: key);
@@ -19,12 +21,45 @@ class _Q32ScreenState extends State<Q32Screen> {
   List<String> pressedLetters = [];
   FlutterTts flutterTts = FlutterTts();
 
+  late Timer _timer;
+  int _timerCount = 25; // Initial timer count in seconds
+  static double progressPercentage = 1.0;
+  static bool timerStarted = false;
+
+
   @override
   void initState() {
     super.initState();
+    _initExercise();
+
+    // start timer after the sound is played to start the test
+    print("timerStarted $timerStarted");
+    if (timerStarted == false) {
+      _startTimer();
+    }
+  }
+  Future<void> _initExercise() async {
     nonword = generateExercise(letters);
     _initTts();
     loadSound(nonword);
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      print("Counter: $_timerCount percentage: $progressPercentage");
+      if (_timerCount > 0) {
+        setState(() {
+          _timerCount--;
+          progressPercentage = _timerCount / 25.0;
+          timerStarted = true;
+        });
+      } else {
+        // Timer is over, navigate to the next screen
+        _timer.cancel(); // to restart timer in the new screen
+        timerStarted = false;
+        print("End of test");
+      }
+    });
   }
 
   @override
@@ -121,8 +156,17 @@ class _Q32ScreenState extends State<Q32Screen> {
                 ),
               ],
             ),
-            SizedBox(height: 1.v),
           ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.transparent,
+        child:LinearPercentIndicator(
+          width: 300,
+          lineHeight: 5.0,
+          percent: progressPercentage,
+          backgroundColor: Colors.white,
+          progressColor: Colors.blue,
         ),
       ),
     );
@@ -133,7 +177,7 @@ class _Q32ScreenState extends State<Q32Screen> {
       onTap: () {
         setState(() {
           pressedLetters.add(text);
-          // listen to 4 non-words then navigate to next screen
+          // reload page until timer ends
           if(pressedLetters.length==nonword.length){
             Navigator.pushNamed(context, AppRoutes.q32Screen);
           }

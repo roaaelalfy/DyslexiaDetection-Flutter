@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../routes/app_routes.dart';
 import 'GenerateRandomLetters1-4.dart';
 
 class Q2Screen extends StatelessWidget {
@@ -6,7 +7,12 @@ class Q2Screen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: DyslexiaExerciseWidget(gridSize: 4,)
+        body: DyslexiaExerciseWidget(
+          currentScreen: 2,
+          gridSize: 4,
+          onTapFunction: (BuildContext context) { Navigator.pushNamed(context, AppRoutes.q2Screen);},
+          navigateToNextScreen: (BuildContext context) {Navigator.pushNamed(context, AppRoutes.q3Screen); },
+        )
     );
   }
 }

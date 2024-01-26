@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
+import '../../routes/app_routes.dart';
 import '../GenerateRandomExercises.dart';
 
 class Q11Screen extends StatelessWidget {
@@ -11,7 +12,7 @@ class Q11Screen extends StatelessWidget {
     "sweet" , "grade" , "crate" , "greet",
     "greet" , "neat" , "seat" , "grade",
     ],
-    ["blue" , "true" , "you" ,"view"
+    ["blue" , "true" , "you" ,"view",
     "crew" , "you" , "glue" , "shoe",
     "glue" , "clue" , "crew" , "true",
     "true" , "blue" , "knew" , "glue"
@@ -24,7 +25,8 @@ class Q11Screen extends StatelessWidget {
         body: DyslexiaExerciseWidget(
           letters: generateExercise(Q11List),
           gridSize: 4,
-          randomizeList: false,
+          onTapFunction: (BuildContext context) { Navigator.pushNamed(context, AppRoutes.q11Screen);},
+          navigateToNextScreen: (BuildContext context) {Navigator.pushNamed(context, AppRoutes.q12Screen); },
         )
     );
   }
