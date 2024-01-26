@@ -8,6 +8,7 @@ class Q2Screen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: DyslexiaExerciseWidget(
+          currentScreen: 2,
           gridSize: 4,
           onTapFunction: (BuildContext context) { Navigator.pushNamed(context, AppRoutes.q2Screen);},
           navigateToNextScreen: (BuildContext context) {Navigator.pushNamed(context, AppRoutes.q3Screen); },

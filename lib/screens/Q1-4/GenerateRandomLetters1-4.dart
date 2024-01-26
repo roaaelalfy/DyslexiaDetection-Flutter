@@ -7,10 +7,19 @@ import 'dart:math';
 
 class DyslexiaExerciseWidget extends StatefulWidget {
   final int gridSize;
+  final int currentScreen;  //Q1 = 1    click + 1    => click1
   final void Function(BuildContext context) onTapFunction;
   final void Function(BuildContext context) navigateToNextScreen;
 
-  DyslexiaExerciseWidget({required this.gridSize, required this.onTapFunction, required this.navigateToNextScreen});
+  DyslexiaExerciseWidget({required this.gridSize, required this.onTapFunction, required this.navigateToNextScreen, required this.currentScreen});
+
+  // performance measures
+  static int clicks =0;
+  static int hits =0;
+  static int misses =0;
+  static int score =0;
+  static double accuracy =0;
+  static double missrate =0;
 
   @override
   State<DyslexiaExerciseWidget> createState() => _DyslexiaExerciseWidgetState();
@@ -79,6 +88,10 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
         randomLetter = null;
         playedSound = false;
         timerStarted = false;
+        // calculate missrate ,score, accuracy and update database.
+        DyslexiaExerciseWidget.missrate = DyslexiaExerciseWidget.misses / DyslexiaExerciseWidget.clicks;
+        DyslexiaExerciseWidget.accuracy = DyslexiaExerciseWidget.hits / DyslexiaExerciseWidget.clicks;
+        DyslexiaExerciseWidget.score = DyslexiaExerciseWidget.hits;
         widget.navigateToNextScreen(context);
       }
     });
@@ -132,6 +145,12 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
       ),
       onTap: () {
         // save the # clicks , misses , hits then reload the screen
+        DyslexiaExerciseWidget.clicks++;
+        if(letter == randomLetter){
+          DyslexiaExerciseWidget.hits++;
+        }else{
+          DyslexiaExerciseWidget.misses++;
+        }
         widget.onTapFunction(context);
       },
     );
