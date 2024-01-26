@@ -27,11 +27,24 @@ flutter:
     - assets/
     - assets/images/
     - assets/images/Dyadpt.png
+    - assets/images/Dyadpt_register_wallpaper.png
   fonts: 
     - family: Inter
       fonts: 
         - asset: assets/fonts/InterRegular.ttf
           weight: 400
+    - family: OpenDyslexic
+      fonts:
+        - asset: assets/fonts/OpenDyslexic-Regular.otf
+    - family: OpenSansItalic
+      fonts:
+        - asset: assets/fonts/OpenSans-Italic-VariableFont.ttf
+    - family: OpenSans
+      fonts:
+        - asset: assets/fonts/OpenSans-VariableFont.ttf
+    - family: SF
+      fonts:
+        - asset: assets/fonts/SF-Pro-Display-Regular.otf
     - family: Inika
       fonts: 
         - asset: assets/fonts/Inika.ttf

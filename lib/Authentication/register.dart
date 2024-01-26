@@ -9,8 +9,6 @@ class RegisterPage extends StatefulWidget{
 
 class _RegisterPageState extends State<RegisterPage>{
 
-  bool _isFemale = false;
-  bool _isMale = false;
   bool _isNative = false;
   bool _failedLangSubject = false;
 
@@ -18,6 +16,12 @@ class _RegisterPageState extends State<RegisterPage>{
   TextEditingController _nationalIDController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _dobController = TextEditingController();
+  TextEditingController _genderController = TextEditingController();
+  TextEditingController _isNativeController = TextEditingController();
+  TextEditingController _failedLangController = TextEditingController();
+
+  DateTime? _selectedDate;
 
 
   void initState() {
@@ -30,23 +34,31 @@ class _RegisterPageState extends State<RegisterPage>{
   }
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
 
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (pickedDate != null && pickedDate != _selectedDate) {
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: SingleChildScrollView(
-          child:Stack(
-            children: [
-              Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/Dyadpt.png'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              SingleChildScrollView(
+      child: Scaffold(
+        appBar: AppBar(title:Text('Dyadapt',style:TextStyle( fontFamily:'OpenDyslexic',fontSize: 50,
+          color: Colors.blue[900])),
+          centerTitle: true,),
+          body: SingleChildScrollView(
                 child: Padding(
-                  padding:EdgeInsets.only(top:100),
+                  padding:EdgeInsets.only(top:10),
                   child: Form(
                     key: _loginFormKey,
                     child: Padding(
@@ -56,7 +68,7 @@ class _RegisterPageState extends State<RegisterPage>{
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: EdgeInsets.all(5),
+                            padding: EdgeInsets.all(3),
                             child: TextFormField(
                               controller: _nameController,
                               decoration: InputDecoration(
@@ -82,11 +94,47 @@ class _RegisterPageState extends State<RegisterPage>{
                           ),
 
                           Padding(
-                            padding: EdgeInsets.all(5),
+                            padding: EdgeInsets.all(3),
+                            child: TextFormField(
+                              controller: _dobController,
+                              decoration: InputDecoration(
+                                hintText: 'Select Date of Birth',
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                  borderSide: const BorderSide(
+                                    color: Colors.black12,
+                                    width: 1,
+                                  ),
+                                ),
+                                filled: true,
+                                floatingLabelBehavior: FloatingLabelBehavior.always,
+                                prefixIcon: InkWell(
+                                  onTap: () => _selectDate(context),
+                                  child: Icon(Icons.calendar_today),
+                                ),
+                              ),
+                              readOnly: true,
+                              onTap: () async {
+                                await _selectDate(context);
+                                if (_selectedDate != null) {
+                                  _dobController.text = _selectedDate!.toLocal().toString().split(' ')[0];
+                                }
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please select your date of birth';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+
+                          Padding(
+                            padding: EdgeInsets.all(3),
                             child: TextFormField(
                               controller: _nationalIDController,
                               decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.confirmation_number),
+                                prefixIcon: Icon(Icons.insert_drive_file),
                                 hintText: 'Enter National ID',
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(25),
@@ -132,12 +180,24 @@ class _RegisterPageState extends State<RegisterPage>{
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.all(5),
+                            padding: EdgeInsets.all(3),
                             child: TextFormField(
-                              controller: _passwordController,
+                              controller: _genderController,
+                              readOnly: true,
+                              onTap: () {
+                                // Open dropdown menu when the text field is tapped
+                                _openGenderDropdown(context);
+                              },
                               decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.password),
-                                hintText: 'Enter password',
+                                prefixIcon: Icon(Icons.autofps_select),
+                                hintText: 'Select gender',
+                                suffixIcon: InkWell(
+                                  onTap: () {
+                                    // Open dropdown menu when the suffix icon is pressed
+                                    _openGenderDropdown(context);
+                                  },
+                                  child: Icon(Icons.arrow_drop_down),
+                                ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(25),
                                   borderSide: const BorderSide(
@@ -150,97 +210,100 @@ class _RegisterPageState extends State<RegisterPage>{
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your password';
+                                  return 'Please select your gender';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+
+                          Padding(
+                            padding: EdgeInsets.all(3),
+                            child: TextFormField(
+                              controller: _isNativeController,
+                              readOnly: true,
+                              onTap: () {
+                                // Open dropdown menu when the text field is tapped
+                                _openNativeLanguageDropdown(context);
+                              },
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.language),
+                                hintText: 'Is English you native language?',
+                                suffixIcon: InkWell(
+                                  onTap: () {
+                                    // Open dropdown menu when the suffix icon is pressed
+                                    _openNativeLanguageDropdown(context);
+                                  },
+                                  child: Icon(Icons.arrow_drop_down),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                  borderSide: const BorderSide(
+                                    color: Colors.black12,
+                                    width: 1,
+                                  ),
+                                ),
+                                filled: true,
+                                floatingLabelBehavior: FloatingLabelBehavior.always,
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'this field is required';
                                 }
                                 return null;
                               },
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text('Select gender:',style: TextStyle(fontSize: 16),),
-                                SizedBox(width: 10), // Add some space between the text and checkboxes
-                                Checkbox(
-                                  value: _isFemale,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _isFemale = value!;
-                                      if (_isFemale) {
-                                        _isMale = false;
-                                      }
-                                    });
+                            padding: EdgeInsets.all(3),
+                            child: TextFormField(
+                              controller: _failedLangController,
+                              readOnly: true,
+                              onTap: () {
+                                // Open dropdown menu when the text field is tapped
+                                _openFailedLanguageDropdown(context);
+                              },
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.sms_failed),
+                                hintText: 'Failed a language subject before?',
+                                suffixIcon: InkWell(
+                                  onTap: () {
+                                    // Open dropdown menu when the suffix icon is pressed
+                                    _openFailedLanguageDropdown(context);
                                   },
+                                  child: Icon(Icons.arrow_drop_down),
                                 ),
-                                Text('Female',style: TextStyle(fontSize: 16),),
-                                SizedBox(width: 10), // Add space between the checkboxes
-                                Checkbox(
-                                  value: _isMale,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _isMale = value!;
-                                      if (_isMale) {
-                                        _isFemale = false;
-                                      }
-                                    });
-                                  },
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                  borderSide: const BorderSide(
+                                    color: Colors.black12,
+                                    width: 1,
+                                  ),
                                 ),
-                                Text('Male',style: TextStyle(fontSize: 16),),
-                              ],
+                                filled: true,
+                                floatingLabelBehavior: FloatingLabelBehavior.always,
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'This field is required';
+                                }
+                                return null;
+                              },
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text('Is English your native language?',style: TextStyle(fontSize: 16),),
-                                SizedBox(width: 65), // Add some space between the text and checkboxes
-                                Checkbox(
-                                  value: _isNative,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _isNative = value!;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text('Have you ever failed a language subject?',style: TextStyle(fontSize: 16),),
-                                 // Add some space between the text and checkboxes
-                                Checkbox(
-                                  value: _failedLangSubject,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _failedLangSubject = value!;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          Padding(
-                            padding: EdgeInsets.all(10),
+                            padding: EdgeInsets.all(15),
                             child:
                                 ElevatedButton(
                                   onPressed: () {
                                     if (_loginFormKey.currentState?.validate() ?? false)
                                     {}
                                   },
-                                  child: Text('Register', style: TextStyle(fontSize: 18, color:Colors.white)),
+                                  child: Text('Register', style: TextStyle(fontSize: 20, color:Colors.white)),
                                   style: ElevatedButton.styleFrom(
-                                    elevation: 12, // Set a higher elevation value
+                                    elevation: 10, // Set a higher elevation value
                                     backgroundColor: Colors.blue[900],
-                                    minimumSize: Size(150, 50),
+                                    minimumSize: Size(250, 50),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(25.0),
                                     ),
@@ -253,9 +316,112 @@ class _RegisterPageState extends State<RegisterPage>{
                   ),
                 ),
               )
-            ],
-          )
       ),
     );
   }
+
+  /******************Gender DropDown**************************************************/
+  void _openGenderDropdown(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 200, // Set the height of the dropdown menu
+          child: Column(
+            children: [
+              ListTile(
+                title: Text('Female'),
+                onTap: () {
+                  setState(() {
+                    _genderController.text = 'Female';
+                    Navigator.pop(context); // Close the dropdown menu
+                  });
+                },
+              ),
+              ListTile(
+                title: Text('Male'),
+                onTap: () {
+                  setState(() {
+                    _genderController.text = 'Male';
+                    Navigator.pop(context); // Close the dropdown menu
+                  });
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+/**********************************************************************************/
+
+/***************************Native DropDown Menu***********************************/
+  void _openNativeLanguageDropdown(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 150, // Set the height of the dropdown menu
+          child: Column(
+            children: [
+              ListTile(
+                title: Text('Yes'),
+                onTap: () {
+                  setState(() {
+                    _isNative = true;
+                    Navigator.pop(context); // Close the dropdown menu
+                  });
+                },
+              ),
+              ListTile(
+                title: Text('No'),
+                onTap: () {
+                  setState(() {
+                    _isNative = false;
+                    Navigator.pop(context); // Close the dropdown menu
+                  });
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+/***********************************************************************/
+
+/****************************Failed Languange Dropdown******************************************/
+  void _openFailedLanguageDropdown(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 150, // Set the height of the dropdown menu
+          child: Column(
+            children: [
+              ListTile(
+                title: Text('Yes'),
+                onTap: () {
+                  setState(() {
+                    _failedLangSubject = true;
+                    Navigator.pop(context); // Close the dropdown menu
+                  });
+                },
+              ),
+              ListTile(
+                title: Text('No'),
+                onTap: () {
+                  setState(() {
+                    _failedLangSubject = false;
+                    Navigator.pop(context); // Close the dropdown menu
+                  });
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+  /**************************************************************************/
 }

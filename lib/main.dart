@@ -8,8 +8,8 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   // Set landscape orientation
   SystemChrome.setPreferredOrientations([
-  DeviceOrientation.landscapeLeft,
-  DeviceOrientation.landscapeRight,
+  DeviceOrientation.portraitDown,
+  DeviceOrientation.portraitUp,
   ]);
 
   ///Please update theme as per your need if required.
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
           theme: theme,
           title: 'dyslexiadetectorapp',
           debugShowCheckedModeBanner: false,
-          initialRoute: AppRoutes.q2Screen,
+          initialRoute: AppRoutes.parentHomePage,
           routes: AppRoutes.routes,
         );
       },

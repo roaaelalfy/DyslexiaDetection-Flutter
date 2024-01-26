@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:dyslexiadetectorapp/core/app_export.dart';
-import 'package:dyslexiadetectorapp/widgets/5x5Matrix.dart';
 import 'package:flutter/material.dart';
 
 import '../GenerateRandomExercises.dart';
