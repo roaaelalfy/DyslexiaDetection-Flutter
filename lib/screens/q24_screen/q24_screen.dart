@@ -2,8 +2,6 @@ import 'package:dyslexiadetectorapp/core/app_export.dart';
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:dyslexiadetectorapp/core/app_export.dart';
-import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'dart:async';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -65,6 +63,7 @@ class _Q24ScreenState extends State<Q24Screen> {
   @override
   void dispose() {
     flutterTts.stop();
+    _timer.cancel();
     super.dispose();
   }
 
@@ -81,19 +80,18 @@ class _Q24ScreenState extends State<Q24Screen> {
         padding: EdgeInsets.symmetric(horizontal: 22.h),
         child: Column( // Wrap everything in a Column
           children: [
-            buildSentence(context),
-            SizedBox(height: 1.v), // Add some spacing if needed
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: LinearPercentIndicator(
-                width: MediaQuery.of(context).size.width,
-                lineHeight: 5.0,
-                percent: progressPercentage,
-                backgroundColor: Colors.white,
-                progressColor: Colors.blue,
-              ),
-            ),
-          ],
+            buildSentence(context), // Add some spacing if needed
+           ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.transparent,
+        child:LinearPercentIndicator(
+          width: 300,
+          lineHeight: 5.0,
+          percent: progressPercentage,
+          backgroundColor: Colors.white,
+          progressColor: Colors.blue,
         ),
       ),
     );
@@ -101,26 +99,27 @@ class _Q24ScreenState extends State<Q24Screen> {
 
 
   Widget buildSentence(BuildContext context) {
-    return Container(
-      width: 349.h,
-      padding: EdgeInsets.symmetric(horizontal: 5.h, vertical: 30.v),
-      decoration: AppDecoration.outlineLightblue100,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(height: 2.v),
-          Container(
-            width: 326.h,
-            margin: EdgeInsets.only(right: 8.h),
-            child: Wrap(
-              spacing: 8.h,
-              children: List.generate(
-                exerciseWords.length,
-                (index) => _buildWord(context, exerciseWords[index], index),
+    return Center(
+      child: Container(
+        width: 349.h,
+        padding: EdgeInsets.symmetric(horizontal: 5.h, vertical: 100.v),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: 2.v),
+            Container(
+              width: 326.h,
+              margin: EdgeInsets.only(right: 8.h),
+              child: Wrap(
+                spacing: 8.h,
+                children: List.generate(
+                  exerciseWords.length,
+                  (index) => _buildWord(context, exerciseWords[index], index),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

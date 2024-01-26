@@ -18,7 +18,6 @@ class Q18Screen extends StatelessWidget {
         body: DyslexiaExerciseWidget(
           letters: generateExercise(Q1819NonWordsLists),
           gridSize: 3,
-          randomizeList: true,
           onTapFunction: (BuildContext context) { Navigator.pushNamed(context, AppRoutes.q18Screen);},
           navigateToNextScreen: (BuildContext context) {Navigator.pushNamed(context, AppRoutes.q19Screen); },
         )

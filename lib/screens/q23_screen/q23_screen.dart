@@ -1,4 +1,5 @@
 import 'package:dyslexiadetectorapp/core/app_export.dart';
+import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:flutter/material.dart';
 import'dart:math';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -13,7 +14,9 @@ class Q23Screen extends StatefulWidget {
 }
 
 class _Q23ScreenState extends State<Q23Screen> {
-  List<String> letters = ["Soame","Aweasome","goaod","Hapqpy","boax","Handsoame","Beaeutiful"];
+  List<String> letters = ["Soame","schowol","Aweasome","goaod","icekcream","Hapqpy",
+                          "boax","desserft","Handsoame","doctoer","Beaeutiful","advenbture",
+                          "trayin","comdputer","shelgves","raeinbow","houise","forrrest"];
   late List<String>characters;
   FlutterTts flutterTts = FlutterTts();
   static bool playedSound = false;
@@ -79,27 +82,27 @@ class _Q23ScreenState extends State<Q23Screen> {
         Container(
           width: double.maxFinite,
           padding: EdgeInsets.symmetric(horizontal: 38.h),
-          child: buildWord(context),),
-          SizedBox(height: 1.v),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: LinearPercentIndicator(
-              width: MediaQuery.of(context).size.width,
-              lineHeight: 5.0,
-              percent: progressPercentage,
-              backgroundColor: Colors.white,
-              progressColor: Colors.blue,
-            ),
-          ),
+          child: buildWord(context),
+        ),
         ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.transparent,
+        child:LinearPercentIndicator(
+          width: 300,
+          lineHeight: 5.0,
+          percent: progressPercentage,
+          backgroundColor: Colors.white,
+          progressColor: Colors.blue,
+        ),
       ),
     );
   }
 
   Widget buildWord(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 1.h),
-      padding: EdgeInsets.symmetric(horizontal: 31.h, vertical: 11.v),
+      margin: EdgeInsets.only(left: 1),
+      padding: EdgeInsets.symmetric(horizontal: 31, vertical: 11),
       decoration: AppDecoration.outlineLightblue10001.copyWith(
         borderRadius: BorderRadiusStyle.roundedBorder25,
       ),
@@ -108,7 +111,7 @@ class _Q23ScreenState extends State<Q23Screen> {
         children: List.generate(
           characters.length,
               (index) => Padding(
-            padding: EdgeInsets.only(bottom: 2.v),
+            padding: EdgeInsets.only(bottom: 2),
             child: InkWell(
               onTap: () {
                 setState(() {

@@ -21,7 +21,7 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   Random random = Random();
   static String? randomLetter;
 
-  late FlutterTts flutterTts;
+  late FlutterTts flutterTts = FlutterTts();
   static bool playedSound = false;
 
   late Timer _timer;
@@ -32,6 +32,7 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   @override
   void initState() {
     super.initState();
+    exerciseLetters=[];
     _initExercise();
 
     // start timer after the sound is played to start the test
@@ -97,9 +98,9 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
                   crossAxisCount: widget.gridSize,
                   childAspectRatio: 1.05,
                 ),
-                itemCount: exerciseLetters!.length,
+                itemCount: exerciseLetters.length,
                 itemBuilder: (context, index) {
-                  return _buildGridTile(exerciseLetters![index]);
+                  return _buildGridTile(exerciseLetters[index]);
                 },
               ),
             ),
@@ -140,8 +141,19 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
     List<String> myExerciseLetters = [];
     myExerciseLetters.add(randomLetter!);
 
-    for (int i = 0; i < gridSize * gridSize - 1; i++) {
-      myExerciseLetters.add(String.fromCharCode(random.nextInt(26) + 'a'.codeUnitAt(0)));
+    //add distractors that are similar in phonology and orthography as the random letter.
+    if(randomLetter =='b'){
+      myExerciseLetters = List.filled(9, 'd') + List.filled(9, 'p') + List.filled(6, 'q');
+    } else if(randomLetter =='a'){
+      myExerciseLetters = List.filled(3, 'a')+ List.filled(3, 'u') + List.filled(12, 'e') + List.filled(6, 'i');
+    }else if(randomLetter =='n'){
+      myExerciseLetters = List.filled(6, 'h')+ List.filled(12, 'u') + List.filled(6, 'm');
+    }
+    // generate random letters
+    else{
+      for (int i = 0; i < gridSize * gridSize - 1; i++) {
+        myExerciseLetters.add(String.fromCharCode(random.nextInt(26) + 'a'.codeUnitAt(0)));
+      }
     }
     myExerciseLetters.shuffle();
     return myExerciseLetters;

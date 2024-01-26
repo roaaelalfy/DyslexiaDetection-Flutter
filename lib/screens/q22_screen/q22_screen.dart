@@ -1,4 +1,5 @@
 import 'package:dyslexiadetectorapp/core/app_export.dart';
+import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:dyslexiadetectorapp/widgets/custom_outlined_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -28,6 +29,7 @@ class _Q22ScreenState extends State<Q22Screen> {
   int _timerCount = 25;  // Initial timer count in seconds
   static double progressPercentage = 1.0;
   static bool timerStarted = false;
+
   @override
   void initState() {
     super.initState();
@@ -94,13 +96,14 @@ class _Q22ScreenState extends State<Q22Screen> {
     int randomIndex = random.nextInt(missingLetters.length);
     return missingLetters[randomIndex].split('');
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
         width: double.maxFinite,
-        padding: EdgeInsets.symmetric(horizontal: 72.h),
+        padding: EdgeInsets.symmetric(horizontal: 72.h , vertical: 150.v),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -112,19 +115,18 @@ class _Q22ScreenState extends State<Q22Screen> {
             ),
             SizedBox(height: 25.v),
             _buildLetterContainers(context, selectedLetters),
-            SizedBox(height: 1.v),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: LinearPercentIndicator(
-                width: MediaQuery.of(context).size.width,
-                lineHeight: 5.0,
-                percent: progressPercentage,
-                backgroundColor: Colors.white,
-                progressColor: Colors.blue,
-              ),
-            ),
           ],
         ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+          color: Colors.transparent,
+          child:LinearPercentIndicator(
+            width: 300,
+            lineHeight: 5.0,
+            percent: progressPercentage,
+            backgroundColor: Colors.white,
+            progressColor: Colors.blue,
+          ),
       ),
     );
   }

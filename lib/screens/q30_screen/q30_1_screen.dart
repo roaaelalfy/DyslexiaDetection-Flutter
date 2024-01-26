@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:dyslexiadetectorapp/core/app_export.dart';
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class Q301Screen extends StatefulWidget {
   const Q301Screen({Key? key}) : super(key: key);
@@ -11,7 +14,40 @@ class Q301Screen extends StatefulWidget {
 
 class _Q301ScreenState extends State<Q301Screen> {
   List<String> pressedLetters = [];
-  late List<String>  correctWord;
+  late List<String> correctWord=[];
+
+  late Timer _timer;
+  int _timerCount = 25; // Initial timer count in seconds
+  static double progressPercentage = 1.0;
+  static bool timerStarted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // start timer after the sound is played to start the test
+    print("timerStarted $timerStarted");
+    if (timerStarted == false) {
+      _startTimer();
+    }
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      print("Counter: $_timerCount percentage: $progressPercentage");
+      if (_timerCount > 0) {
+        setState(() {
+          _timerCount--;
+          progressPercentage = _timerCount / 25.0;
+          timerStarted = true;
+        });
+      } else {
+        // Timer is over, navigate to the next screen
+        _timer.cancel(); // to restart timer in the new screen
+        timerStarted = false;
+        Navigator.pushNamed(context, AppRoutes.q31Screen);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,8 +136,17 @@ class _Q301ScreenState extends State<Q301Screen> {
                 ),
               ],
             ),
-            SizedBox(height: 1.v),
           ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.transparent,
+        child:LinearPercentIndicator(
+          width: 300,
+          lineHeight: 5.0,
+          percent: progressPercentage,
+          backgroundColor: Colors.white,
+          progressColor: Colors.blue,
         ),
       ),
     );

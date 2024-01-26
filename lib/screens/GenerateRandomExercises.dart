@@ -8,7 +8,6 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 class DyslexiaExerciseWidget extends StatefulWidget {
   final List<String> letters;
   final int gridSize;
-  final bool randomizeList;
   final void Function(BuildContext context) onTapFunction;
   final void Function(BuildContext context) navigateToNextScreen;
 
@@ -16,18 +15,18 @@ class DyslexiaExerciseWidget extends StatefulWidget {
     required this.gridSize,
     required this.onTapFunction,
     required this.navigateToNextScreen,
-    required this.letters, required this.randomizeList});
+    required this.letters});
 
   @override
   State<DyslexiaExerciseWidget> createState() => _DyslexiaExerciseWidgetState();
 }
 
 class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
-  late List<String> exerciseletters;
+  late List<String> exerciseLetters=[];
   Random random = Random();
-  static String? randomLetter;
+  static String? randomIndex;
 
-  late FlutterTts flutterTts;
+  late FlutterTts flutterTts =FlutterTts();
   static bool playedSound = false;
 
   late Timer _timer;
@@ -52,16 +51,14 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   }
 
   Future<void> _initExercise() async {
-    randomLetter ??= String.fromCharCode(random.nextInt(widget.letters.length));
+    randomIndex ??= widget.letters[random.nextInt(widget.letters.length)];
     print("playedSound: $playedSound");
     // ensures the sound is played only once at the beginning of the exercise
     if (!playedSound) {
       await _initTts();
-      await loadLetterSound("Choose $randomLetter!");
+      await loadLetterSound("Choose $randomIndex");
     }
-    widget.randomizeList ?
-    exerciseletters = generateExercise(widget.letters,widget.gridSize):
-    exerciseletters = widget.letters..shuffle();
+    exerciseLetters = generateExercise(widget.letters,widget.gridSize);
   }
 
   @override
@@ -81,7 +78,7 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
       } else {
         // Timer is over, navigate to the next screen
         _timer.cancel();  // to restart timer in the new screen
-        randomLetter = null;
+        randomIndex = null;
         playedSound = false;
         timerStarted = false;
         widget.navigateToNextScreen(context);
@@ -97,15 +94,16 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
         children: [
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 220.h, vertical: 70.v),
+              padding: EdgeInsets.symmetric(horizontal: 130.h, vertical: 2.v),
               child: GridView.builder(
+                shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: widget.gridSize,
                   childAspectRatio: 1.05,
                 ),
-                itemCount: exerciseletters.length,
+                itemCount: exerciseLetters.length,
                 itemBuilder: (context, index) {
-                  return _buildGridTile(exerciseletters[index]);
+                  return _buildGridTile(exerciseLetters[index]);
                 },
               ),
             ),
@@ -125,13 +123,16 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
 
   Widget _buildGridTile(String letter) {
     return GestureDetector(
-      child: Card(
-        elevation: 6,
-        child: Container(
-          child: Center(
-            child: Text(
+      child: Padding(
+        padding: const EdgeInsets.all(1.0),
+        child: Card(
+          elevation: 6,
+          child: Container(
+            child: Center(
+              child: Text(
               letter,
               style: TextStyle(fontSize: 18.0,),
+                ),
             ),
           ),
         ),
@@ -145,7 +146,7 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
 
   List<String> generateExercise(List<String>letters ,int gridSize) {
     List<String> myExerciseList = [];
-    myExerciseList.add(randomLetter!);
+    myExerciseList.add(randomIndex!);
 
     for (int i = 0; i < gridSize * gridSize-1; i++) {
       int randomIndex= random.nextInt(letters.length);

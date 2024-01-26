@@ -22,7 +22,7 @@ class _Q25ScreenState extends State<Q25Screen> {
   };
   late List<bool> clickedStatus;
   late List<String> exerciseWords;
-  late FlutterTts flutterTts;
+  late FlutterTts flutterTts =FlutterTts();
   late Timer _timer;
   int _timerCount = 25;  // Initial timer count in seconds
   static double progressPercentage = 1.0;
@@ -31,6 +31,7 @@ class _Q25ScreenState extends State<Q25Screen> {
   @override
   void initState() {
     super.initState();
+    exerciseWords=[];
     _initExercise();
 
     // start timer after the sound is played to start the test
@@ -71,6 +72,8 @@ class _Q25ScreenState extends State<Q25Screen> {
   @override
   void dispose() {
     flutterTts.stop();
+    _timer.cancel();
+    timerStarted=false;
     super.dispose();
   }
 
@@ -82,39 +85,39 @@ class _Q25ScreenState extends State<Q25Screen> {
         padding: EdgeInsets.symmetric(horizontal: 22.h),
         child: buildSentence(context),
       ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.transparent,
+        child:LinearPercentIndicator(
+          width: 300,
+          lineHeight: 5.0,
+          percent: progressPercentage,
+          backgroundColor: Colors.white,
+          progressColor: Colors.blue,
+        ),
+      ),
     );
   }
 
   Widget buildSentence(BuildContext context) {
     return Container(
       width: 349.h,
-      padding: EdgeInsets.symmetric(horizontal: 5.h, vertical: 30.v),
-      decoration: AppDecoration.outlineLightblue100,
-      child: Expanded(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(height: 2.v),
-            Container(
-              width: 326.h,
-              margin: EdgeInsets.only(right: 8.h),
-              child: Wrap(
-                spacing: 8.h,
-                children: List.generate(
-                  exerciseWords.length,
-                      (index) => _buildWord(context, exerciseWords[index], index),
-                ),
+      padding: EdgeInsets.symmetric(horizontal: 5.h, vertical: 100.v),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(height: 2.v),
+          Container(
+            width: 326.h,
+            margin: EdgeInsets.only(right: 8.h),
+            child: Wrap(
+              spacing: 8.h,
+              children: List.generate(
+                exerciseWords.length,
+                    (index) => _buildWord(context, exerciseWords[index], index),
               ),
             ),
-            LinearPercentIndicator(       // Linear progress bar
-              width: MediaQuery.of(context).size.width,
-              lineHeight: 5.0,
-              percent: progressPercentage,  // Calculate the percentage based on timer count
-              backgroundColor: Colors.white,
-              progressColor: Colors.blue,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

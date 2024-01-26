@@ -18,7 +18,6 @@ class Q21Screen extends StatelessWidget {
         body: DyslexiaExerciseWidget(
           letters: generateExercise(Q2021NonWordsLists),
           gridSize: 3,
-          randomizeList: true,
           onTapFunction: (BuildContext context) { Navigator.pushNamed(context, AppRoutes.q21Screen);},
           navigateToNextScreen: (BuildContext context) {Navigator.pushNamed(context, AppRoutes.q22Screen); },
         )

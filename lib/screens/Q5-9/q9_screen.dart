@@ -16,8 +16,7 @@ class Q9Screen extends StatelessWidget {
     return Scaffold(
         body: DyslexiaExerciseWidget(
           letters: generateExercise(Q9LettersLists),
-          gridSize: 6,
-          randomizeList: true,
+          gridSize: 3,
           onTapFunction: (BuildContext context) { Navigator.pushNamed(context, AppRoutes.q9Screen);},
           navigateToNextScreen: (BuildContext context) {Navigator.pushNamed(context, AppRoutes.q10Screen); },
         )

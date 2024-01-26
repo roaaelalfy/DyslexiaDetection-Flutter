@@ -17,7 +17,6 @@ class Q5Screen extends StatelessWidget {
         body: DyslexiaExerciseWidget(
           letters: generateExercise(Q5LettersLists),
           gridSize: 5,
-          randomizeList: true,
           onTapFunction: (BuildContext context) { Navigator.pushNamed(context, AppRoutes.q5Screen);},
             navigateToNextScreen: (BuildContext context) {Navigator.pushNamed(context, AppRoutes.q6Screen); },
         )

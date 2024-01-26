@@ -26,8 +26,9 @@ class _Q26ScreenState extends State<Q26Screen> {
   ];
   List<String> possibleWrongLetters = ["dbay", "daqp", "xmnu", "jegp","uaeo","uaio","FTLI","aouh"];
   List<String> testWord = [];
-  int randomIndex=0;
+  static late int randomIndex;
   FlutterTts flutterTts = FlutterTts();
+  static bool playedSound = false;
 
   late Timer _timer;
   int _timerCount = 25;  // Initial timer count in seconds
@@ -38,7 +39,7 @@ class _Q26ScreenState extends State<Q26Screen> {
   void initState() {
     super.initState();
     _initExercise();
-
+    randomIndex=0;
     // start timer after the sound is played to start the test
     print("timerStarted $timerStarted");
     if (timerStarted== false) {
@@ -53,7 +54,9 @@ class _Q26ScreenState extends State<Q26Screen> {
 
   Future<void> _initExercise() async {
     await _initTts();
-    await loadSound("Remove the wrong letter.");
+    if(!playedSound) {
+      await loadSound("Replace the wrong letter.");
+    }
     _generateRandomIndex();
     _generateRandomTestWord();
   }
@@ -69,6 +72,7 @@ class _Q26ScreenState extends State<Q26Screen> {
       } else {
         // Timer is over, navigate to the next screen
         _timer.cancel();  // to restart timer in the new screen
+        playedSound = false;
         timerStarted = false;
         Navigator.pushNamed(context, AppRoutes.q27Screen);
       }
@@ -77,6 +81,8 @@ class _Q26ScreenState extends State<Q26Screen> {
   @override
   void dispose() {
     flutterTts.stop();
+    _timer.cancel();
+    playedSound = false;
     super.dispose();
   }
   String getKey() {
@@ -85,6 +91,7 @@ class _Q26ScreenState extends State<Q26Screen> {
   void _generateRandomIndex() {
     Random random = Random();
     randomIndex = random.nextInt(listOfMaps.length);
+    print("randomIndex $randomIndex");
   }
 
   void _generateRandomTestWord() {
@@ -95,6 +102,8 @@ class _Q26ScreenState extends State<Q26Screen> {
   }
   @override
   Widget build(BuildContext context) {
+    print(listOfMaps);
+    print(possibleWrongLetters);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
@@ -124,30 +133,35 @@ class _Q26ScreenState extends State<Q26Screen> {
                   _buildContainer(context, generateRandomLetters()[i], i),
               ],
             ),
-            LinearPercentIndicator(       // Linear progress bar
-              width: MediaQuery.of(context).size.width,
-              lineHeight: 5.0,
-              percent: progressPercentage,  // Calculate the percentage based on timer count
-              backgroundColor: Colors.white,
-              progressColor: Colors.blue,
-            ),
           ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.transparent,
+        child:LinearPercentIndicator(
+          width: 300,
+          lineHeight: 5.0,
+          percent: progressPercentage,
+          backgroundColor: Colors.white,
+          progressColor: Colors.blue,
         ),
       ),
     );
   }
-
   Widget _buildContainer(BuildContext context, String text, int index) {
     return GestureDetector(
       onTap: () {
         setState(() {
-          // Replace the letter at the specific index with the tapped letter
-          testWord[testWord.indexOf(getKey())] = text;
+          // Remove the key-value pair from listOfMaps
           listOfMaps.removeAt(randomIndex);
+
+          // Remove the corresponding wrong letters from possibleWrongLetters
           possibleWrongLetters.removeAt(randomIndex);
+
+          // Reload question with new random letter
+          _generateRandomIndex();
+          _generateRandomTestWord();
         });
-        // reload question until the timer is over
-        Navigator.pushNamed(context, AppRoutes.q26Screen);
       },
       child: Container(
         margin: EdgeInsets.fromLTRB(6.h, 4.h, 0, 0),
@@ -169,6 +183,7 @@ class _Q26ScreenState extends State<Q26Screen> {
     // Speak the random letter
     try {
       await flutterTts.speak(text);
+      playedSound = true;
     } catch (e) {
       print("TTS Error: $e");
     }

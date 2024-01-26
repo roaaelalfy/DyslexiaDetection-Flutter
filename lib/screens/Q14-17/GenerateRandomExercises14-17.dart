@@ -15,13 +15,23 @@ class DyslexiaExerciseWidget extends StatefulWidget {
     required this.onTapFunction,
     required this.navigateToNextScreen,});
 
-
   @override
   State<DyslexiaExerciseWidget> createState() => _DyslexiaExerciseWidgetState();}
 
 
 class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
-  Map<String, List<String>> Q14To17Map = {
+  late List<String> exerciseletters;
+  Random random = Random();
+
+  late FlutterTts flutterTts =FlutterTts();
+  static bool playedSound = false;
+
+  late Timer _timer;
+  int _timerCount = 25;  // Initial timer count in seconds
+  static double progressPercentage = 1.0;
+  static bool timerStarted = false;
+
+  static Map<String, List<String>> Q14To17Map = {
     "F": List.filled(12, 'E') + ['F'] + List.filled(12, 'E'),
     "E": List.filled(12, 'F') + ['E'] + List.filled(12, 'F'),
     "p": List.filled(12, 'q') + ['p'] + List.filled(12, 'q'),
@@ -44,21 +54,10 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
     "t": List.filled(12, 'f') + ['t'] + List.filled(12, 'f'),
     "A": List.filled(12, 'V') + ['A'] + List.filled(12, 'V'),
   };
-  late List<String> exerciseletters;
-  Random random = Random();
-
-  late FlutterTts flutterTts;
-  static bool playedSound = false;
-
-  late Timer _timer;
-  int _timerCount = 25;  // Initial timer count in seconds
-  static double progressPercentage = 1.0;
-  static bool timerStarted = false;
-
   @override
   void initState() {
     super.initState();
-    _initTts();
+    exerciseletters=[];
     _initExercise();
 
     // start timer after the sound is played to start the test

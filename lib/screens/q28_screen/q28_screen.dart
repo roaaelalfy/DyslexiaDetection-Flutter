@@ -40,6 +40,7 @@ class _Q28ScreenState extends State<Q28Screen> {
   late List<String> pressedLetters = [];
   late String correctWord = selectedWord;
   FlutterTts flutterTts = FlutterTts();
+  static bool playedSound = false;
 
   late Timer _timer;
   int _timerCount = 25; // Initial timer count in seconds
@@ -65,7 +66,9 @@ class _Q28ScreenState extends State<Q28Screen> {
 
   Future<void> _initExercise() async {
     _initTts();
-    loadSound();
+    if(!playedSound) {
+      loadSound();
+    }
     separateAndShuffleLetters();
   }
 
@@ -82,14 +85,17 @@ class _Q28ScreenState extends State<Q28Screen> {
         // Timer is over, navigate to the next screen
         _timer.cancel(); // to restart timer in the new screen
         timerStarted = false;
-        Navigator.pushNamed(context, AppRoutes.q28Screen);
+        playedSound = false;
+        Navigator.pushNamed(context, AppRoutes.q29Screen);
       }
     });
   }
 
   @override
   void dispose() {
-    flutterTts.stop(); // Stop TTS when disposing the widget
+    flutterTts.stop();
+    _timer.cancel();
+    playedSound = false;
     super.dispose();
   }
 
@@ -132,14 +138,17 @@ class _Q28ScreenState extends State<Q28Screen> {
                   _buildContainer(context, letter),
               ],
             ),
-            LinearPercentIndicator(       // Linear progress bar
-              width: MediaQuery.of(context).size.width,
-              lineHeight: 5.0,
-              percent: progressPercentage,  // Calculate the percentage based on timer count
-              backgroundColor: Colors.white,
-              progressColor: Colors.blue,
-            ),
           ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.transparent,
+        child:LinearPercentIndicator(
+          width: 300,
+          lineHeight: 5.0,
+          percent: progressPercentage,
+          backgroundColor: Colors.white,
+          progressColor: Colors.blue,
         ),
       ),
     );
@@ -184,6 +193,7 @@ class _Q28ScreenState extends State<Q28Screen> {
   Future<void> loadSound() async {
     try {
       await flutterTts.speak("Rearrange to form a word ");
+      playedSound = true;
     } catch (e) {
       print("TTS Error: $e");
     }
