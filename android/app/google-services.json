@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "735353270958",
+    "project_id": "dyslexiadetectorapp",
+    "storage_bucket": "dyslexiadetectorapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:735353270958:android:dded4ddbb6743d60aef33f",
+        "android_client_info": {
+          "package_name": "com.dyslexiadetectorapp.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXkyNnvCy8cy0PtXsdVSt2_uoogEHw0-Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

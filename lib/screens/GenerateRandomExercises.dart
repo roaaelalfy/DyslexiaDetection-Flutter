@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
+// 5-13 , 18-21
 class DyslexiaExerciseWidget extends StatefulWidget {
   final int currentScreen;
   final List<String> letters;

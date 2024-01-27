@@ -2,14 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'core/app_export.dart';
 import 'core/utils/size_utils.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 var globalMessengerKey = GlobalKey<ScaffoldMessengerState>();
-void main() {
+  Future main() async{
+    // Ensure that the firebase database is initialized before runApp
   WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+  } catch (e) {
+    print('Firebase initialization failed: $e');
+  }
   // Set landscape orientation
   SystemChrome.setPreferredOrientations([
-  DeviceOrientation.portraitDown,
-  DeviceOrientation.portraitUp,
+  DeviceOrientation.landscapeLeft,
+  DeviceOrientation.landscapeRight,
   ]);
 
   ///Please update theme as per your need if required.
@@ -26,7 +34,7 @@ class MyApp extends StatelessWidget {
           theme: theme,
           title: 'dyslexiadetectorapp',
           debugShowCheckedModeBanner: false,
-          initialRoute: AppRoutes.splashScreen,
+          initialRoute: AppRoutes.q1Screen,
           routes: AppRoutes.routes,
         );
       },
