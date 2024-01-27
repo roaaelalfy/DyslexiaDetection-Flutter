@@ -20,6 +20,7 @@ class Q10Screen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: DyslexiaExerciseWidget(
+          currentScreen: 10,
           letters: generateExercise(Q10List),
           gridSize: 3,
           onTapFunction: (BuildContext context) { Navigator.pushNamed(context, AppRoutes.q10Screen);},

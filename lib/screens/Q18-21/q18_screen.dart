@@ -16,6 +16,7 @@ class Q18Screen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: DyslexiaExerciseWidget(
+          currentScreen: 18,
           letters: generateExercise(Q1819NonWordsLists),
           gridSize: 3,
           onTapFunction: (BuildContext context) { Navigator.pushNamed(context, AppRoutes.q18Screen);},
