@@ -22,9 +22,24 @@ class _Q26ScreenState extends State<Q26Screen> {
     {'n': "npset"},
     {'e': "Triel"},
     {'E':"Elash"},
-    {'e':"goel"}
+    {'e':"goel"},
+    {'q':"aqventure"},
+    {'p':"ropot"},
+    {'l':"queslion"},
+    {'e':"woed"},
+    {'b':"elebhant"},
+    {'a':"coconat"},
+    {'a':"schaol"},
+    {'t':"airoptane"},
+    {'j':"wjndow"},
+    {'m':"rainbom"},
+    {'u':"chupter"},
+    {'e':"tewn"},
+    {'q':"qanda"},
   ];
-  List<String> possibleWrongLetters = ["dbay", "daqp", "xmnu", "jegp","uaeo","uaio","FTLI","aouh"];
+  List<String> correctLetters = ["d", "a", "m", "j","u","a","F","a","d","b","t","o","p","u","o","l","i","w","a","o","p"];
+  List<String> possibleCorrectLetters = ["dbay", "daqp", "xmnu", "jegp","uaeo","uaeo","FTLI","aouh"
+    ,"dbay","dbat","ftil","uaio","dbpq","nuho","uaio","tfli","uaio","unmw","uaio","gauo","dbpq"];
   List<String> testWord = [];
   static late int randomIndex;
   FlutterTts flutterTts = FlutterTts();
@@ -34,6 +49,17 @@ class _Q26ScreenState extends State<Q26Screen> {
   int _timerCount = 25;  // Initial timer count in seconds
   static double progressPercentage = 1.0;
   static bool timerStarted = false;
+
+
+  // performance measures
+  static int clicks =0;
+  static int hits =0;
+  static int misses =0;
+  static int score =0;
+  static double accuracy =0;
+  static double missrate =0;
+  final int currentScreen = 26;
+
 
   @override
   void initState() {
@@ -74,6 +100,10 @@ class _Q26ScreenState extends State<Q26Screen> {
         _timer.cancel();  // to restart timer in the new screen
         playedSound = false;
         timerStarted = false;
+        // calculate missrate ,score, accuracy and update database.
+        missrate = misses / clicks;
+        accuracy = hits / clicks;
+        score = hits;
         Navigator.pushNamed(context, AppRoutes.q27Screen);
       }
     });
@@ -91,19 +121,16 @@ class _Q26ScreenState extends State<Q26Screen> {
   void _generateRandomIndex() {
     Random random = Random();
     randomIndex = random.nextInt(listOfMaps.length);
-    print("randomIndex $randomIndex");
   }
 
   void _generateRandomTestWord() {
     testWord = listOfMaps[randomIndex].values.first.split('');
   }
   List<String> generateRandomLetters() {
-    return possibleWrongLetters[randomIndex].split('');
+    return possibleCorrectLetters[randomIndex].split('');
   }
   @override
   Widget build(BuildContext context) {
-    print(listOfMaps);
-    print(possibleWrongLetters);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
@@ -139,7 +166,7 @@ class _Q26ScreenState extends State<Q26Screen> {
       bottomNavigationBar: BottomAppBar(
         color: Colors.transparent,
         child:LinearPercentIndicator(
-          width: 300,
+          width: MediaQuery.of(context).size.width,
           lineHeight: 5.0,
           percent: progressPercentage,
           backgroundColor: Colors.white,
@@ -152,12 +179,19 @@ class _Q26ScreenState extends State<Q26Screen> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          // Remove the key-value pair from listOfMaps
+          print("randomIndex= $randomIndex");
+          clicks++;
+          if(text == correctLetters[randomIndex]){
+            hits++;
+            print("hits26= $hits");
+          }else{
+            misses++;
+            print("misses26= $misses");
+          }
+          // Remove the key-value pair from listOfMaps and corresponding letters from possibleCorrectLetters
           listOfMaps.removeAt(randomIndex);
-
-          // Remove the corresponding wrong letters from possibleWrongLetters
-          possibleWrongLetters.removeAt(randomIndex);
-
+          possibleCorrectLetters.removeAt(randomIndex);
+          correctLetters.removeAt(randomIndex);
           // Reload question with new random letter
           _generateRandomIndex();
           _generateRandomTestWord();

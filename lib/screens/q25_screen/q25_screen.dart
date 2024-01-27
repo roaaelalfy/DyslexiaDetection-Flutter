@@ -22,11 +22,21 @@ class _Q25ScreenState extends State<Q25Screen> {
   };
   late List<bool> clickedStatus;
   late List<String> exerciseWords;
+  late String selectedKey;
   late FlutterTts flutterTts =FlutterTts();
   late Timer _timer;
   int _timerCount = 25;  // Initial timer count in seconds
   static double progressPercentage = 1.0;
   static bool timerStarted = false;
+
+  // performance measures
+  static int clicks =0;
+  static int hits =0;
+  static int misses =0;
+  static int score =0;
+  static double accuracy =0;
+  static double missrate =0;
+  final int currentScreen = 25;
 
   @override
   void initState() {
@@ -64,6 +74,11 @@ class _Q25ScreenState extends State<Q25Screen> {
         // Timer is over, navigate to the next screen
         _timer.cancel();  // to restart timer in the new screen
         timerStarted = false;
+        // calculate missrate ,score, accuracy and update database.
+        missrate = misses / clicks;
+        accuracy = hits / clicks;
+        score = hits;
+        Navigator.pushNamed(context, AppRoutes.q26Screen);
       }
     });
   }
@@ -88,7 +103,7 @@ class _Q25ScreenState extends State<Q25Screen> {
       bottomNavigationBar: BottomAppBar(
         color: Colors.transparent,
         child:LinearPercentIndicator(
-          width: 300,
+          width:MediaQuery.of(context).size.width,
           lineHeight: 5.0,
           percent: progressPercentage,
           backgroundColor: Colors.white,
@@ -122,19 +137,25 @@ class _Q25ScreenState extends State<Q25Screen> {
     );
   }
 
-  Widget _buildWord(BuildContext context, String word, int index) {
+  Widget _buildWord(BuildContext context, String selectedWord, int index) {
     return GestureDetector(
       onTap: () {
         setState(() {
           clickedStatus[index] = !clickedStatus[index];
-          // store the selected word then navigate
+          clicks++;
+          // store the selected word and navigate
+          if(selectedWord == selectedKey){
+            hits++;
+          }else{
+            misses++;
+          }
           Navigator.pushNamed(context, AppRoutes.q26Screen);
         });
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.h, vertical: 6.v),
         child: Text(
-          word,
+          selectedWord,
           style: CustomTextStyles.headlineSmallInika.copyWith(
             color: clickedStatus[index] ? appTheme.lightBlue100 : appTheme.black900,
           ),
@@ -148,7 +169,7 @@ class _Q25ScreenState extends State<Q25Screen> {
     List<String> myExercise =[];
     // Choose a random key from the map
     List<String> randomKey = map.keys.toList()..shuffle();
-    String selectedKey = randomKey.first;
+    selectedKey = randomKey.first;
     myExercise = map[selectedKey]!;
 
     clickedStatus = List.generate(myExercise.length, (index) => false);
