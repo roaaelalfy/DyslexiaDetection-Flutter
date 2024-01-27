@@ -26,8 +26,11 @@ flutter:
   assets: 
     - assets/
     - assets/images/
-    - assets/images/Dyadpt.png
-    - assets/images/Dyadpt_register_wallpaper.png
+    - assets/images/logo.png
+    - assets/images/login.png
+    - assets/images/logo_navy.png
+    - assets/images/role_wallpaper.png
+    - assets/images/start_exam.png
   fonts: 
     - family: Inter
       fonts: 

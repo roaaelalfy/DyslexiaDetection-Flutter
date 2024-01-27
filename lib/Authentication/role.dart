@@ -9,7 +9,7 @@ class RolePage extends StatefulWidget{
 }
 
 class _RolePageState extends State<RolePage>{
- Null role=null;
+  String? role;
   void initState() {
     super.initState();
   }
@@ -25,7 +25,7 @@ class _RolePageState extends State<RolePage>{
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/Dyadpt_register_wallpaper.png'),
+                image: AssetImage('assets/images/role_wallpaper.png'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -36,9 +36,9 @@ class _RolePageState extends State<RolePage>{
             children: [
               Center(
                   child:Padding(
-                    padding: const EdgeInsets.all(15.0),
+                    padding: const EdgeInsets.only(top:250),
                     child: Text('Choose your role',style:TextStyle( fontSize: 40,fontWeight: FontWeight.bold,
-                        color: Colors.blue[900])),
+                        color: Colors.white)),
                   )
               ),
               Padding(
@@ -46,14 +46,16 @@ class _RolePageState extends State<RolePage>{
                 child:
                 ElevatedButton(
                   onPressed: () {
-                    role ='User' as Null;
+                    role ='User';
                     Navigator.pushNamed(context, AppRoutes.register);
                   },
                   child: Text(
-                      'User', style: TextStyle(fontSize: 20, color:Colors.white)),
+                      'User', style: TextStyle(fontSize: 20,
+                      color:Colors.indigo[900],
+                      fontWeight: FontWeight.bold)),
                   style: ElevatedButton.styleFrom(
                     elevation: 10, // Set a higher elevation value
-                    backgroundColor: Colors.blue[900],
+                    backgroundColor: Colors.white,
                     minimumSize: Size(250, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25.0),
@@ -66,14 +68,17 @@ class _RolePageState extends State<RolePage>{
                 child:
                 ElevatedButton(
                   onPressed: () {
-                    role ='Teacher' as Null;
+                    role ='Teacher';
                     Navigator.pushNamed(context, AppRoutes.register);
                   },
                   child: Text(
-                      'Parent/Teacher', style: TextStyle(fontSize: 20, color:Colors.white)),
+                      'Parent/Teacher', style: TextStyle(fontSize: 20,
+                      color:Colors.white,
+                      fontWeight: FontWeight.bold),
+                      ),
                   style: ElevatedButton.styleFrom(
                     elevation: 10, // Set a higher elevation value
-                    backgroundColor: Colors.blue[900],
+                    backgroundColor: Colors.indigo[900],
                     minimumSize: Size(250, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25.0),
