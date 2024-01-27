@@ -15,6 +15,7 @@ class Q5Screen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: DyslexiaExerciseWidget(
+          currentScreen:5,
           letters: generateExercise(Q5LettersLists),
           gridSize: 5,
           onTapFunction: (BuildContext context) { Navigator.pushNamed(context, AppRoutes.q5Screen);},

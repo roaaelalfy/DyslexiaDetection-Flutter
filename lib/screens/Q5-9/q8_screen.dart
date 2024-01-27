@@ -15,6 +15,7 @@ class Q8Screen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: DyslexiaExerciseWidget(
+          currentScreen: 8,
           letters: generateExercise(Q8LettersLists),
           gridSize: 6,
           onTapFunction: (BuildContext context) { Navigator.pushNamed(context, AppRoutes.q8Screen);},

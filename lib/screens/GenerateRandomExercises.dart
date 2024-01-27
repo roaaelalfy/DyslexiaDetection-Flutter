@@ -6,6 +6,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class DyslexiaExerciseWidget extends StatefulWidget {
+  final int currentScreen;
   final List<String> letters;
   final int gridSize;
   final void Function(BuildContext context) onTapFunction;
@@ -15,13 +16,15 @@ class DyslexiaExerciseWidget extends StatefulWidget {
     required this.gridSize,
     required this.onTapFunction,
     required this.navigateToNextScreen,
-    required this.letters});
+    required this.letters,required this.currentScreen});
+
 
   @override
   State<DyslexiaExerciseWidget> createState() => _DyslexiaExerciseWidgetState();
 }
 
 class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
+
   late List<String> exerciseLetters=[];
   Random random = Random();
   static String? randomIndex;
@@ -33,6 +36,13 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   int _timerCount = 25;  // Initial timer count in seconds
   static double progressPercentage = 1.0;
   static bool timerStarted = false;
+  static int clicks =0;
+  static int hits =0;
+  static int misses =0;
+  static int score =0;
+  static double accuracy =0;
+  static double missrate =0;
+
 
   @override
   void initState() {
@@ -44,7 +54,7 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
     if (timerStarted== false) {
       _startTimer();
     }
-}
+  }
   Future<void> _initTts() async {
     await flutterTts.setLanguage("en-US");
     await flutterTts.setSpeechRate(0.2);
@@ -65,6 +75,12 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   void dispose() {
     flutterTts.stop(); // Stop TTS when disposing the widget
     super.dispose();
+   clicks=0;
+    hits=0;
+    misses=0;
+    missrate=0;
+   accuracy=0;
+    score=0;
   }
   void _startTimer() {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -81,6 +97,18 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
         randomIndex = null;
         playedSound = false;
         timerStarted = false;
+        // calculate missrate ,score, accuracy and update database.
+        missrate =misses / clicks;
+        accuracy =hits / clicks;
+        score = hits;
+        //update database
+        //reset performance measures
+        clicks=0;
+        hits=0;
+        misses=0;
+        missrate=0;
+        accuracy=0;
+        score=0;
         widget.navigateToNextScreen(context);
       }
     });
@@ -139,6 +167,15 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
       ),
       onTap: (){
         // save the # clicks , misses , hits then reload the screen
+        clicks++;
+        print("clicks:$clicks");
+        print("letter:$letter");
+        print("randomIndex:$randomIndex");
+        if(letter == randomIndex){
+          hits++;print("hits:$hits");
+        }else{
+         misses++;print("misses:$misses");
+        }
         widget.onTapFunction(context);
       },
     );

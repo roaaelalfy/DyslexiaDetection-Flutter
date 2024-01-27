@@ -3,7 +3,6 @@ import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:flutter/material.dart';
 import'dart:math';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'dart:async';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 class Q23Screen extends StatefulWidget {
@@ -14,17 +13,46 @@ class Q23Screen extends StatefulWidget {
 }
 
 class _Q23ScreenState extends State<Q23Screen> {
-  List<String> letters = ["Soame","schowol","Aweasome","goaod","icekcream","Hapqpy",
-                          "boax","desserft","Handsoame","doctoer","Beaeutiful","advenbture",
-                          "trayin","comdputer","shelgves","raeinbow","houise","forrrest"];
+  List<Map<String, dynamic>> words = [
+    {'some': "Soame"},
+    {'school': "schowol"},
+    {'Awesome': "Aweasome"},
+    {'good': "goaod"},
+    {'icecream': "icekcream"},
+    {'Happy': "Hapqpy"},
+    {'box':"boax"},
+    {'dessert':"desserft"},
+    {'Handsome':"Handsoame"},
+    {'doctor':"doctoer"},
+    {'Beautiful':"Beaeutiful"},
+    {'adventure':"advenbture"},
+    {'train':"trayin"},
+    {'computer':"comdputer"},
+    {'shelvs':"shelgves"},
+    {'rainbow':"raeinbow"},
+    {'house':"houise"},
+    {'forrest':"forrrest"},
+  ];
   late List<String>characters;
   FlutterTts flutterTts = FlutterTts();
   static bool playedSound = false;
+
+  Random random = Random();
   late int randomIndex;
   late Timer _timer;
   int _timerCount = 25;  // Initial timer count in seconds
   static double progressPercentage = 1.0;
   static bool timerStarted = false;
+
+  // performance measures
+  static int clicks =0;
+  static int hits =0;
+  static int misses =0;
+  static int score =0;
+  static double accuracy =0;
+  static double missrate =0;
+  final int currentScreen =23;
+
   @override
   void initState() {
     super.initState();
@@ -53,6 +81,11 @@ class _Q23ScreenState extends State<Q23Screen> {
         _timer.cancel();  // to restart timer in the new screen
         playedSound = false;
         timerStarted = false;
+        // calculate missrate ,score, accuracy and update database.
+        missrate = misses / clicks;
+        accuracy = hits / clicks;
+        score = hits;
+
         Navigator.pushNamed(context, AppRoutes.q24Screen);
       }
     });
@@ -67,10 +100,8 @@ class _Q23ScreenState extends State<Q23Screen> {
     await flutterTts.setSpeechRate(0.2);
   }
   void _generateRandomWord() {
-    randomIndex = _generateRandomIndex();
-    // Get the word at the random index
-    String randomWord = letters[randomIndex];
-    characters = randomWord.split('');
+    randomIndex = random.nextInt(words.length);
+    characters = words[randomIndex].values.first.split('');
   }
 
   @override
@@ -89,7 +120,7 @@ class _Q23ScreenState extends State<Q23Screen> {
       bottomNavigationBar: BottomAppBar(
         color: Colors.transparent,
         child:LinearPercentIndicator(
-          width: 300,
+          width: MediaQuery.of(context).size.width,
           lineHeight: 5.0,
           percent: progressPercentage,
           backgroundColor: Colors.white,
@@ -115,12 +146,17 @@ class _Q23ScreenState extends State<Q23Screen> {
             child: InkWell(
               onTap: () {
                 setState(() {
+                  clicks++;
                   characters.removeAt(index);
-                  letters.removeAt(randomIndex);
+                  if(characters.join() == words[randomIndex].keys.first){
+                    hits++;
+                  }else{
+                    misses++;
+                  }
+                  words.removeAt(randomIndex);
                   // Generate a new random word
                   _generateRandomWord();
                   if (characters.isEmpty) {
-                    // If the characters list is empty, generate a new random word
                     _generateRandomWord();
                   }
 
@@ -135,11 +171,6 @@ class _Q23ScreenState extends State<Q23Screen> {
         ),
       ),
     );
-  }
-
-  // Function to generate a random index
-  int _generateRandomIndex() {
-    return Random().nextInt(letters.length);
   }
   Future<void> loadLetterSound() async{
     // Speak the random letter

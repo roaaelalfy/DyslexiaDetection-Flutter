@@ -1,7 +1,7 @@
 import 'dart:async';
-
 import 'package:dyslexiadetectorapp/core/app_export.dart';
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -20,6 +20,12 @@ class _Q301ScreenState extends State<Q301Screen> {
   int _timerCount = 25; // Initial timer count in seconds
   static double progressPercentage = 1.0;
   static bool timerStarted = false;
+  static int clicks =0;
+  static int hits =0;
+  static int misses =0;
+  static int score =0;
+  static double accuracy =0;
+  static double missrate =0;
 
   @override
   void initState() {
@@ -44,6 +50,18 @@ class _Q301ScreenState extends State<Q301Screen> {
         // Timer is over, navigate to the next screen
         _timer.cancel(); // to restart timer in the new screen
         timerStarted = false;
+        // calculate missrate ,score, accuracy and update database.
+        missrate =misses / clicks;
+        accuracy =hits / clicks;
+        score = hits;
+        //update database
+        //reset performance measures
+        clicks=0;
+        hits=0;
+        misses=0;
+        missrate=0;
+        accuracy=0;
+        score=0;
         Navigator.pushNamed(context, AppRoutes.q31Screen);
       }
     });
@@ -141,13 +159,16 @@ class _Q301ScreenState extends State<Q301Screen> {
       ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.transparent,
+        child:SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
         child:LinearPercentIndicator(
-          width: 300,
+          width: MediaQuery.of(context).size.width,
           lineHeight: 5.0,
           percent: progressPercentage,
           backgroundColor: Colors.white,
           progressColor: Colors.blue,
         ),
+      ),
       ),
     );
   }
@@ -155,9 +176,21 @@ class _Q301ScreenState extends State<Q301Screen> {
   Widget _buildContainer(BuildContext context, String text) {
     return GestureDetector(
       onTap: () {
+
+        print("pressed:$pressedLetters");print("correct:$correctWord");
         setState(() {
           pressedLetters.add(text);
+          clicks++;
+          print("clicks:$clicks");
           if(pressedLetters.length==correctWord.length){
+
+            if (listEquals(pressedLetters, correctWord)) {
+              hits++;
+              print("hits:$hits");
+            } else {
+              misses++;
+              print("misses:$misses");
+            }
             Navigator.pushNamed(context, AppRoutes.q31Screen);
           }
         });

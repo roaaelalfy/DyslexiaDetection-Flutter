@@ -7,7 +7,7 @@ import 'dart:math';
 
 class DyslexiaExerciseWidget extends StatefulWidget {
   final int gridSize;
-  final int currentScreen;  //Q1 = 1    click + 1    => click1
+  final int currentScreen;  //Q1 = 1    clicks + 1    => clicks1
   final void Function(BuildContext context) onTapFunction;
   final void Function(BuildContext context) navigateToNextScreen;
 
@@ -70,6 +70,14 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   @override
   void dispose() {
     flutterTts.stop();
+    _timer.cancel();
+    // reset performance metrics
+    DyslexiaExerciseWidget.missrate = 0;
+    DyslexiaExerciseWidget.hits = 0;
+    DyslexiaExerciseWidget.misses = 0;
+    DyslexiaExerciseWidget.accuracy = 0;
+    DyslexiaExerciseWidget.score = 0;
+    DyslexiaExerciseWidget.clicks = 0;
     super.dispose();
   }
 
@@ -92,6 +100,15 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
         DyslexiaExerciseWidget.missrate = DyslexiaExerciseWidget.misses / DyslexiaExerciseWidget.clicks;
         DyslexiaExerciseWidget.accuracy = DyslexiaExerciseWidget.hits / DyslexiaExerciseWidget.clicks;
         DyslexiaExerciseWidget.score = DyslexiaExerciseWidget.hits;
+
+        // reset performance metrics
+        DyslexiaExerciseWidget.missrate = 0;
+        DyslexiaExerciseWidget.hits = 0;
+        DyslexiaExerciseWidget.misses = 0;
+        DyslexiaExerciseWidget.accuracy = 0;
+        DyslexiaExerciseWidget.score = 0;
+        DyslexiaExerciseWidget.clicks = 0;
+
         widget.navigateToNextScreen(context);
       }
     });
