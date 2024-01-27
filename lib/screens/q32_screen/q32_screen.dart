@@ -15,6 +15,14 @@ class Q32Screen extends StatefulWidget {
 }
 
 class _Q32ScreenState extends State<Q32Screen> {
+  // performance measures
+  static int clicks =0;
+  static int hits =0;
+  static int misses =0;
+  static int score =0;
+  static double accuracy =0;
+  static double missrate =0;
+
   List<String> letters = ["smay" ,"crench","qota","wabas","glis","glaba","nana"];
   late String nonword;
   late int count;
@@ -57,6 +65,11 @@ class _Q32ScreenState extends State<Q32Screen> {
         // Timer is over, navigate to the next screen
         _timer.cancel(); // to restart timer in the new screen
         timerStarted = false;
+        // calculate missrate ,score, accuracy and update database.
+        missrate = misses / clicks;
+        accuracy = hits / clicks;
+        score = hits;
+        //add to database
         print("End of test");
       }
     });
@@ -175,10 +188,19 @@ class _Q32ScreenState extends State<Q32Screen> {
   Widget _buildContainer(BuildContext context, String text) {
     return GestureDetector(
       onTap: () {
+        clicks++;
         setState(() {
           pressedLetters.add(text);
           // reload page until timer ends
           if(pressedLetters.length==nonword.length){
+            for (int i = 0; i < nonword.length; i++) {
+              if (pressedLetters[i] == nonword[i]) {
+                hits++;
+              }
+              else{
+                misses++;
+              }
+            }
             Navigator.pushNamed(context, AppRoutes.q32Screen);
           }
         });

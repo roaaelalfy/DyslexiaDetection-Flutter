@@ -15,6 +15,14 @@ class Q28Screen extends StatefulWidget {
 }
 
 class _Q28ScreenState extends State<Q28Screen> {
+  // performance measures
+  static int clicks =0;
+  static int hits =0;
+  static int misses =0;
+  static int score =0;
+  static double accuracy =0;
+  static double missrate =0;
+
   List<String> words = [
     'beautiful',
     'diamond',
@@ -36,6 +44,8 @@ class _Q28ScreenState extends State<Q28Screen> {
   late String selectedWord;
   late List<String> shuffledSyllables;
   late int syllablesCount;
+  late List<String> chosenWordSyllabes;
+  late int syllablesIndexCount=0;
 
   late List<String> pressedLetters = [];
   late String correctWord = selectedWord;
@@ -86,6 +96,11 @@ class _Q28ScreenState extends State<Q28Screen> {
         _timer.cancel(); // to restart timer in the new screen
         timerStarted = false;
         playedSound = false;
+        // calculate missrate ,score, accuracy and update database.
+        missrate = misses / clicks;
+        accuracy = hits / clicks;
+        score = hits;
+        //add to database
         Navigator.pushNamed(context, AppRoutes.q29Screen);
       }
     });
@@ -157,9 +172,18 @@ class _Q28ScreenState extends State<Q28Screen> {
   Widget _buildContainer(BuildContext context, String text) {
     return GestureDetector(
       onTap: () {
+        clicks++;
         shuffledSyllables.remove(text);
         setState(() {
           pressedLetters.add(text);
+          if(text==chosenWordSyllabes[syllablesIndexCount]) {
+            hits++;
+          }
+          else{
+            misses++;
+          }
+          syllablesIndexCount++;
+
           if (pressedLetters.length == syllablesCount) {
             Navigator.pushNamed(context, AppRoutes.q28Screen);
           }
@@ -185,6 +209,7 @@ class _Q28ScreenState extends State<Q28Screen> {
   void separateAndShuffleLetters() {
     selectedWord = words[Random().nextInt(words.length)];
     int syllablesListIndex = words.indexOf(selectedWord);
+    chosenWordSyllabes = wordSyllables[syllablesListIndex].split(' ');
     shuffledSyllables = wordSyllables[syllablesListIndex].split(' ')
       ..shuffle();
     syllablesCount = shuffledSyllables.length;

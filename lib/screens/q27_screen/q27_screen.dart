@@ -15,6 +15,16 @@ class Q27Screen extends StatefulWidget {
 }
 
 class _Q27ScreenState extends State<Q27Screen> {
+
+  // performance measures
+  static int clicks =0;
+  static int hits =0;
+  static int misses =0;
+  static int score =0;
+  static double accuracy =0;
+  static double missrate =0;
+
+
   List<String> words = ['bird', 'potatoes', 'bread', 'vegetable', 'education','break'];
   late String selectedWord;
   late List<String> shuffledLetters;
@@ -67,6 +77,12 @@ class _Q27ScreenState extends State<Q27Screen> {
         _timer.cancel();  // to restart timer in the new screen
         timerStarted = false;
         playedSound = false;
+        // calculate missrate ,score, accuracy and update database.
+        missrate = misses / clicks;
+        accuracy = hits / clicks;
+        score = hits;
+        //add to database
+
         Navigator.pushNamed(context, AppRoutes.q28Screen);
       }
     });
@@ -136,10 +152,19 @@ class _Q27ScreenState extends State<Q27Screen> {
   Widget _buildContainer(BuildContext context, String text) {
     return GestureDetector(
       onTap: () {
+        clicks++;
         shuffledLetters.remove(text);
         setState(() {
           pressedLetters.add(text);
           if(pressedLetters.length==correctWord.length){
+            for (int i = 0; i < correctWord.length; i++) {
+              if (pressedLetters[i] == correctWord[i]) {
+                hits++;
+              }
+              else{
+                misses++;
+              }
+            }
             // store written value then reload screen until timer is over
             Navigator.pushNamed(context, AppRoutes.q27Screen);
             }
