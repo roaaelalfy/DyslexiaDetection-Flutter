@@ -159,13 +159,16 @@ class _Q301ScreenState extends State<Q301Screen> {
       ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.transparent,
+        child:SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
         child:LinearPercentIndicator(
-          width: 300,
+          width: MediaQuery.of(context).size.width,
           lineHeight: 5.0,
           percent: progressPercentage,
           backgroundColor: Colors.white,
           progressColor: Colors.blue,
         ),
+      ),
       ),
     );
   }
