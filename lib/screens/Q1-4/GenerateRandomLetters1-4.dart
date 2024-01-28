@@ -4,22 +4,15 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:async';
 import 'dart:math';
+import '../../firestore_services.dart';
 
 class DyslexiaExerciseWidget extends StatefulWidget {
   final int gridSize;
-  final int currentScreen;  //Q1 = 1    click + 1    => click1
+  final int currentScreen;
   final void Function(BuildContext context) onTapFunction;
   final void Function(BuildContext context) navigateToNextScreen;
 
   DyslexiaExerciseWidget({required this.gridSize, required this.onTapFunction, required this.navigateToNextScreen, required this.currentScreen});
-
-  // performance measures
-  static int clicks =0;
-  static int hits =0;
-  static int misses =0;
-  static int score =0;
-  static double accuracy =0;
-  static double missrate =0;
 
   @override
   State<DyslexiaExerciseWidget> createState() => _DyslexiaExerciseWidgetState();
@@ -38,11 +31,22 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   static double progressPercentage = 1.0;
   static bool timerStarted = false;
 
+  final FirestoreService firestoreService = FirestoreService();
+  // performance measures
+  static int clicks =0;
+  static int hits =0;
+  static int misses =0;
+  static int score =0;
+  static double accuracy =0;
+  static double missrate =0;
+
   @override
   void initState() {
     super.initState();
     exerciseLetters=[];
     _initExercise();
+    //print all data in database
+    firestoreService.getAllScreensDataOfPlayer("SqnGDMQzmZMlJ06aURNl5rnnUQL2");
 
     // start timer after the sound is played to start the test
     print("timerStarted $timerStarted");
@@ -70,6 +74,14 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   @override
   void dispose() {
     flutterTts.stop();
+    _timer.cancel();
+    // reset performance metrics
+    missrate = 0;
+    hits = 0;
+    misses = 0;
+    accuracy = 0;
+    score = 0;
+    clicks = 0;
     super.dispose();
   }
 
@@ -88,10 +100,23 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
         randomLetter = null;
         playedSound = false;
         timerStarted = false;
-        // calculate missrate ,score, accuracy and update database.
-        DyslexiaExerciseWidget.missrate = DyslexiaExerciseWidget.misses / DyslexiaExerciseWidget.clicks;
-        DyslexiaExerciseWidget.accuracy = DyslexiaExerciseWidget.hits / DyslexiaExerciseWidget.clicks;
-        DyslexiaExerciseWidget.score = DyslexiaExerciseWidget.hits;
+
+        // calculate missrate ,score, accuracy
+        missrate = misses / clicks;
+        accuracy = hits / clicks;
+        score = hits;
+
+        //update database
+        updateDatabase(widget.currentScreen);
+
+        // reset performance metrics
+        missrate = 0;
+        hits = 0;
+        misses = 0;
+        accuracy = 0;
+        score = 0;
+        clicks = 0;
+
         widget.navigateToNextScreen(context);
       }
     });
@@ -145,11 +170,11 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
       ),
       onTap: () {
         // save the # clicks , misses , hits then reload the screen
-        DyslexiaExerciseWidget.clicks++;
+        clicks++;
         if(letter == randomLetter){
-          DyslexiaExerciseWidget.hits++;
+         hits++;
         }else{
-          DyslexiaExerciseWidget.misses++;
+         misses++;
         }
         widget.onTapFunction(context);
       },
@@ -159,21 +184,10 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   List<String> generateExercise(int gridSize) {
     List<String> myExerciseLetters = [];
     myExerciseLetters.add(randomLetter!);
-
-    //add distractors that are similar in phonology and orthography as the random letter.
-    if(randomLetter =='b'){
-      myExerciseLetters = List.filled(9, 'd') + List.filled(9, 'p') + List.filled(6, 'q');
-    } else if(randomLetter =='a'){
-      myExerciseLetters = List.filled(3, 'a')+ List.filled(3, 'u') + List.filled(12, 'e') + List.filled(6, 'i');
-    }else if(randomLetter =='n'){
-      myExerciseLetters = List.filled(6, 'h')+ List.filled(12, 'u') + List.filled(6, 'm');
-    }
     // generate random letters
-    else{
       for (int i = 0; i < gridSize * gridSize - 1; i++) {
         myExerciseLetters.add(String.fromCharCode(random.nextInt(26) + 'a'.codeUnitAt(0)));
       }
-    }
     myExerciseLetters.shuffle();
     return myExerciseLetters;
   }
@@ -185,5 +199,16 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
     } catch (e) {
       print("TTS Error: $e");
     }
+  }
+
+  Future<void> updateDatabase(int currentScreen) async{
+    await firestoreService.addScreenDataForPlayer({
+      'clicks$currentScreen': clicks,
+      'hits$currentScreen': hits,
+      'miss$currentScreen': misses,
+      'score$currentScreen': score,
+      'accuracy$currentScreen': accuracy,
+      'missrate$currentScreen': missrate,
+    });
   }
 }

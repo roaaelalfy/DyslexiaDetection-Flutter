@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
+import 'package:dyslexiadetectorapp/firestore_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class DyslexiaExerciseWidget extends StatefulWidget {
+  final int currentScreen;
   final int gridSize;
   final void Function(BuildContext context) onTapFunction;
   final void Function(BuildContext context) navigateToNextScreen;
@@ -13,7 +15,8 @@ class DyslexiaExerciseWidget extends StatefulWidget {
   DyslexiaExerciseWidget({
     required this.gridSize,
     required this.onTapFunction,
-    required this.navigateToNextScreen,});
+    required this.navigateToNextScreen,required this.currentScreen});
+
 
   @override
   State<DyslexiaExerciseWidget> createState() => _DyslexiaExerciseWidgetState();}
@@ -22,15 +25,22 @@ class DyslexiaExerciseWidget extends StatefulWidget {
 class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   late List<String> exerciseletters;
   Random random = Random();
+  late String selectedKey;
 
   late FlutterTts flutterTts =FlutterTts();
   static bool playedSound = false;
+  final FirestoreService firestoreService = FirestoreService();
 
   late Timer _timer;
   int _timerCount = 25;  // Initial timer count in seconds
   static double progressPercentage = 1.0;
   static bool timerStarted = false;
-
+  static int clicks =0;
+  static int hits =0;
+  static int misses =0;
+  static int score =0;
+  static double accuracy =0;
+  static double missrate =0;
   static Map<String, List<String>> Q14To17Map = {
     "F": List.filled(12, 'E') + ['F'] + List.filled(12, 'E'),
     "E": List.filled(12, 'F') + ['E'] + List.filled(12, 'F'),
@@ -85,6 +95,12 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   void dispose() {
     flutterTts.stop(); // Stop TTS when disposing the widget
     super.dispose();
+    clicks=0;
+    hits=0;
+    misses=0;
+    missrate=0;
+    accuracy=0;
+    score=0;
   }
   void _startTimer() {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -100,6 +116,22 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
         _timer.cancel();  // to restart timer in the new screen
         playedSound = false;
         timerStarted = false;
+        // calculate missrate ,score, accuracy and update database.
+        missrate =misses / clicks;
+        print("missrate:$missrate");
+        accuracy =hits / clicks;
+        print("accuracy:$accuracy");
+        score = hits;
+        print("hits:$hits");
+        //update database
+        updateDatabase(widget.currentScreen);
+        //reset performance measures
+        clicks=0;
+        hits=0;
+        misses=0;
+        missrate=0;
+        accuracy=0;
+        score=0;
         widget.navigateToNextScreen(context);
       }
     });
@@ -154,6 +186,13 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
       ),
       onTap: (){
         // save the # clicks , misses , hits then reload the screen
+        clicks++;
+        print("clicks:$clicks");
+        print("letter:$letter");
+        print("Key:$selectedKey");
+        if(letter==selectedKey){
+        hits++;print("hits:$hits");
+        }else{misses++;print("misses:$misses");}
         widget.onTapFunction(context);
       },
     );
@@ -162,7 +201,7 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   List<String> generateExercise(Map<String, List<String>> map) {
     // Choose a random key from the map
     List<String> randomKey = map.keys.toList()..shuffle();
-    String selectedKey = randomKey.first;
+     selectedKey = randomKey.first;
     exerciseletters = map[selectedKey]!;
     exerciseletters.shuffle();
     // remove after picked to avoid repetition
@@ -178,5 +217,16 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
     } catch (e) {
       print("TTS Error: $e");
     }
+  }
+
+  Future<void> updateDatabase(int currentScreen) async{
+    await firestoreService.addScreenDataForPlayer({
+      'clicks$currentScreen': clicks,
+      'hits$currentScreen': hits,
+      'miss$currentScreen': misses,
+      'score$currentScreen': score,
+      'accuracy$currentScreen': accuracy,
+      'missrate$currentScreen': missrate,
+    });
   }
 }

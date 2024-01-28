@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage>{
          Container(
            decoration: const BoxDecoration(
              image: DecorationImage(
-               image: AssetImage('assets/images/Dyadpt_register_wallpaper.png'),
+               image: AssetImage('assets/images/login.png'),
                fit: BoxFit.cover,
              ),
            ),
@@ -39,19 +39,32 @@ class _LoginPageState extends State<LoginPage>{
          Center(
            child: SingleChildScrollView(
                  child: Padding(
-                   padding:EdgeInsets.only(top:0),
+                   padding:EdgeInsets.all(0),
                    child: Form(
                      key: _loginFormKey,
                      child: Padding(
-                       padding: EdgeInsets.all(10),
+                       padding: EdgeInsets.fromLTRB(0, 0, 0, 150),
                        child: Column(
-                         mainAxisSize: MainAxisSize.max,
                          mainAxisAlignment: MainAxisAlignment.center,
+                         mainAxisSize: MainAxisSize.max,
                          children: [
-                           Text('Dyadapt',style:TextStyle( fontFamily:'OpenDyslexic',fontSize: 50,
-                               color: Colors.blue[900])),
+                           Row(
+                             mainAxisAlignment: MainAxisAlignment.center,
+                             mainAxisSize: MainAxisSize.max,
+                             children: [
+                               Image.asset(
+                                 'assets/images/logo_navy.png',
+                                 width: 70, // Adjust the width as needed
+                                 height: 70, // Adjust the height as needed
+                               ),
+                               SizedBox(width: 10),
+                               Text('Dyadapt',style:TextStyle( fontFamily:'OpenDyslexic',
+                                   fontSize: 45,
+                                   color: Colors.indigo[900])),
+                             ],
+                           ),
                            Padding(
-                             padding: EdgeInsets.all(10),
+                             padding: EdgeInsets.fromLTRB(50, 5, 50, 5),
                              child: TextFormField(
                                controller: _loginemailController,
                                decoration: InputDecoration(
@@ -76,7 +89,7 @@ class _LoginPageState extends State<LoginPage>{
                              ),
                            ),
                            Padding(
-                             padding: EdgeInsets.all(10),
+                             padding: EdgeInsets.fromLTRB(50, 5, 50, 0),
                              child: TextFormField(
                                controller: _loginpasswordController,
                                decoration: InputDecoration(
@@ -101,8 +114,8 @@ class _LoginPageState extends State<LoginPage>{
                              ),
                            ),
                            Padding(
-                             padding: EdgeInsets.all(10),
-                             child: Row(
+                             padding: EdgeInsets.fromLTRB(50, 10, 50, 0),
+                             child: Column(
                                mainAxisSize: MainAxisSize.max,
                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                children: [
@@ -110,17 +123,15 @@ class _LoginPageState extends State<LoginPage>{
                                    mainAxisSize: MainAxisSize.max,
                                    crossAxisAlignment: CrossAxisAlignment.start,
                                    children: [
-                                     Text(
-                                       'Don\'t have an account?',
-                                       style: TextStyle(fontSize: 18, color: Colors.lightBlue[900], fontWeight: FontWeight.bold)
-                                     ),
                                      TextButton(
                                          onPressed: () {
-                                           Navigator.pushNamed(context,AppRoutes.register);
+                                           Navigator.pushNamed(context,AppRoutes.role);
                                          },
                                          child: Text(
-                                           'Create Account',
-                                           style: TextStyle(fontSize: 18, color: Colors.lightBlue[900], fontWeight: FontWeight.bold),
+                                           ' Create Account',
+                                           style: TextStyle(fontSize: 20,
+                                               color: Colors.lightBlue[900],
+                                               fontWeight: FontWeight.bold),
                                          ),
                                      ),
                                    ],
@@ -131,11 +142,11 @@ class _LoginPageState extends State<LoginPage>{
                                      if (_loginFormKey.currentState?.validate() ?? false)
                                      {}
                                    },
-                                   child: Text('Login', style: TextStyle(fontSize: 18, color:Colors.white)),
+                                   child: Text('Login', style: TextStyle(fontSize: 20, color:Colors.white)),
                                    style: ElevatedButton.styleFrom(
                                      elevation: 12, // Set a higher elevation value
-                                     backgroundColor: Colors.blue[900],
-                                     minimumSize: Size(150, 50),
+                                     backgroundColor: Colors.indigo[900],
+                                     minimumSize: Size(250, 50),
                                      shape: RoundedRectangleBorder(
                                        borderRadius: BorderRadius.circular(25.0),
                                      ),

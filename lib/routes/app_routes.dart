@@ -1,7 +1,10 @@
+import 'package:dyslexiadetectorapp/Authentication/countdown.dart';
 import 'package:dyslexiadetectorapp/Authentication/login.dart';
 import 'package:dyslexiadetectorapp/Authentication/parent_homepage.dart';
 import 'package:dyslexiadetectorapp/Authentication/register.dart';
 import 'package:dyslexiadetectorapp/Authentication/role.dart';
+import 'package:dyslexiadetectorapp/Authentication/splash_screen.dart';
+import 'package:dyslexiadetectorapp/Authentication/start_exam.dart';
 import 'package:flutter/material.dart';
 import 'package:dyslexiadetectorapp/screens/q29_screen/q29_screen.dart';
 import 'package:dyslexiadetectorapp/screens/Q5-9/q9_screen.dart';
@@ -39,9 +42,12 @@ import '../screens/q32_screen/q32_screen.dart';
 
 
 class AppRoutes {
+  static const String splashScreen = '/splash_screen';
   static const String login = '/login';
   static const String register = '/register';
   static const String role = '/role';
+  static const String startExam = '/start_exam';
+  static const String countdown= '/countdown';
   static const String parentHomePage = '/parent_homepage';
   static const String q1Screen = '/q1_screen';
   static const String q2Screen = '/q2_screen';
@@ -79,9 +85,12 @@ class AppRoutes {
   static const String appNavigationScreen = '/app_navigation_screen';
 
   static Map<String, WidgetBuilder> routes = {
+    splashScreen :(context) => SplashScreen(),
     register:(context) => RegisterPage(),
     login: (context) => LoginPage(),
     role: (context) => RolePage(),
+    startExam : (context) => StartExamPage(),
+    countdown : (context) => CountdownScreen(),
     parentHomePage: (context) => ParentHomePage(),
     q1Screen: (context) => Q1Screen(),
     q2Screen: (context) => Q2Screen(),

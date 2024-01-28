@@ -1,3 +1,4 @@
+import 'package:dyslexiadetectorapp/core/app_export.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -53,8 +54,12 @@ class _RegisterPageState extends State<RegisterPage>{
   Widget build(BuildContext context) {
     return Material(
       child: Scaffold(
-        appBar: AppBar(title:Text('Dyadapt',style:TextStyle( fontFamily:'OpenDyslexic',fontSize: 50,
-          color: Colors.blue[900])),
+        backgroundColor: Colors.grey[50],
+        appBar: AppBar(backgroundColor:Colors.grey[50],
+          title:Text("Let's get started",style:TextStyle(
+              fontSize: 35,
+              fontWeight: FontWeight.bold,
+          color: Colors.blue[900]),),
           centerTitle: true,),
           body: SingleChildScrollView(
                 child: Padding(
@@ -68,7 +73,7 @@ class _RegisterPageState extends State<RegisterPage>{
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: EdgeInsets.all(3),
+                            padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
                             child: TextFormField(
                               controller: _nameController,
                               decoration: InputDecoration(
@@ -84,17 +89,17 @@ class _RegisterPageState extends State<RegisterPage>{
                                 filled: true,
                                 floatingLabelBehavior: FloatingLabelBehavior.always,
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your full name';
-                                }
-                                return null;
-                              },
+                              // validator: (value) {
+                              //   if (value == null || value.isEmpty) {
+                              //     return 'Please enter your full name';
+                              //   }
+                              //   return null;
+                              // },
                             ),
                           ),
 
                           Padding(
-                            padding: EdgeInsets.all(3),
+                            padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
                             child: TextFormField(
                               controller: _dobController,
                               decoration: InputDecoration(
@@ -120,17 +125,17 @@ class _RegisterPageState extends State<RegisterPage>{
                                   _dobController.text = _selectedDate!.toLocal().toString().split(' ')[0];
                                 }
                               },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please select your date of birth';
-                                }
-                                return null;
-                              },
+                              // validator: (value) {
+                              //   if (value == null || value.isEmpty) {
+                              //     return 'Please select your date of birth';
+                              //   }
+                              //   return null;
+                              // },
                             ),
                           ),
 
                           Padding(
-                            padding: EdgeInsets.all(3),
+                            padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
                             child: TextFormField(
                               controller: _nationalIDController,
                               decoration: InputDecoration(
@@ -146,16 +151,16 @@ class _RegisterPageState extends State<RegisterPage>{
                                 filled: true,
                                 floatingLabelBehavior: FloatingLabelBehavior.always,
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your National ID';
-                                }
-                                return null;
-                              },
+                              // validator: (value) {
+                              //   if (value == null || value.isEmpty) {
+                              //     return 'Please enter your National ID';
+                              //   }
+                              //   return null;
+                              // },
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.all(5),
+                            padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
                             child: TextFormField(
                               controller: _emailController,
                               decoration: InputDecoration(
@@ -171,16 +176,16 @@ class _RegisterPageState extends State<RegisterPage>{
                                 filled: true,
                                 floatingLabelBehavior: FloatingLabelBehavior.always,
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your email address';
-                                }
-                                return null;
-                              },
+                              // validator: (value) {
+                              //   if (value == null || value.isEmpty) {
+                              //     return 'Please enter your email address';
+                              //   }
+                              //   return null;
+                              // },
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.all(3),
+                            padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
                             child: TextFormField(
                               controller: _genderController,
                               readOnly: true,
@@ -208,17 +213,17 @@ class _RegisterPageState extends State<RegisterPage>{
                                 filled: true,
                                 floatingLabelBehavior: FloatingLabelBehavior.always,
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please select your gender';
-                                }
-                                return null;
-                              },
+                              // validator: (value) {
+                              //   if (value == null || value.isEmpty) {
+                              //     return 'Please select your gender';
+                              //   }
+                              //   return null;
+                              // },
                             ),
                           ),
 
                           Padding(
-                            padding: EdgeInsets.all(3),
+                            padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
                             child: TextFormField(
                               controller: _isNativeController,
                               readOnly: true,
@@ -246,16 +251,16 @@ class _RegisterPageState extends State<RegisterPage>{
                                 filled: true,
                                 floatingLabelBehavior: FloatingLabelBehavior.always,
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'this field is required';
-                                }
-                                return null;
-                              },
+                              // validator: (value) {
+                              //   if (value == null || value.isEmpty) {
+                              //     return 'this field is required';
+                              //   }
+                              //   return null;
+                              // },
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.all(3),
+                            padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
                             child: TextFormField(
                               controller: _failedLangController,
                               readOnly: true,
@@ -265,7 +270,7 @@ class _RegisterPageState extends State<RegisterPage>{
                               },
                               decoration: InputDecoration(
                                 prefixIcon: Icon(Icons.sms_failed),
-                                hintText: 'Failed a language subject before?',
+                                hintText: 'Failed a language subject?',
                                 suffixIcon: InkWell(
                                   onTap: () {
                                     // Open dropdown menu when the suffix icon is pressed
@@ -283,12 +288,12 @@ class _RegisterPageState extends State<RegisterPage>{
                                 filled: true,
                                 floatingLabelBehavior: FloatingLabelBehavior.always,
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'This field is required';
-                                }
-                                return null;
-                              },
+                              // validator: (value) {
+                              //   if (value == null || value.isEmpty) {
+                              //     return 'This field is required';
+                              //   }
+                              //   return null;
+                              // },
                             ),
                           ),
                           Padding(
@@ -298,11 +303,12 @@ class _RegisterPageState extends State<RegisterPage>{
                                   onPressed: () {
                                     if (_loginFormKey.currentState?.validate() ?? false)
                                     {}
+                                    Navigator.pushNamed(context, AppRoutes.startExam);
                                   },
                                   child: Text('Register', style: TextStyle(fontSize: 20, color:Colors.white)),
                                   style: ElevatedButton.styleFrom(
                                     elevation: 10, // Set a higher elevation value
-                                    backgroundColor: Colors.blue[900],
+                                    backgroundColor: Colors.indigo[900],
                                     minimumSize: Size(250, 50),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(25.0),
