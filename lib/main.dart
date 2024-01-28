@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'Authentication/Provider.dart';
 import 'core/app_export.dart';
 import 'core/utils/size_utils.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,10 +21,12 @@ var globalMessengerKey = GlobalKey<ScaffoldMessengerState>();
   DeviceOrientation.portraitUp,
   DeviceOrientation.portraitDown,
   ]);
-
-  ///Please update theme as per your need if required.
-  ThemeHelper().changeTheme('primary');
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+        create: (context) => MyProvider(),
+        child: MyApp()
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

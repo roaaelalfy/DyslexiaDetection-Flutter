@@ -1,6 +1,9 @@
 import 'package:dyslexiadetectorapp/core/app_export.dart';
+import 'package:dyslexiadetectorapp/services/firestore_services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 
 class RegisterUserAsAdminPage extends StatefulWidget{
   RegisterUserAsAdminPage({super.key});
@@ -15,13 +18,15 @@ class _RegisterUserAsAdminPageState extends State<RegisterUserAsAdminPage>{
 
   TextEditingController _nameController = TextEditingController();
   TextEditingController _nationalIDController = TextEditingController();
-  TextEditingController _dobController = TextEditingController();
+  TextEditingController _ageController = TextEditingController();
   TextEditingController _genderController = TextEditingController();
   TextEditingController _isNativeController = TextEditingController();
   TextEditingController _failedLangController = TextEditingController();
+  late int age;
 
   DateTime? _selectedDate;
 
+  final String adminId = FirebaseAuth.instance.currentUser!.uid;
 
   void initState() {
     super.initState();
@@ -30,21 +35,6 @@ class _RegisterUserAsAdminPageState extends State<RegisterUserAsAdminPage>{
     super.dispose();
   }
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-
-    if (pickedDate != null && pickedDate != _selectedDate) {
-      setState(() {
-        _selectedDate = pickedDate;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,57 +83,30 @@ class _RegisterUserAsAdminPageState extends State<RegisterUserAsAdminPage>{
                           // },
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
-                        child: TextFormField(
-                          controller: _dobController,
-                          decoration: InputDecoration(
-                            hintText: 'Select Date of Birth',
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(25),
-                              borderSide: const BorderSide(
-                                color: Colors.black12,
-                                width: 1,
-                              ),
-                            ),
-                            filled: true,
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            prefixIcon: InkWell(
-                              onTap: () => _selectDate(context),
-                              child: Icon(Icons.calendar_today),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
+                      child: TextFormField(
+                        controller: _ageController,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.calendar_today),
+                          hintText: 'Enter Age',
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25),
+                            borderSide: const BorderSide(
+                              color: Colors.black12,
+                              width: 1,
                             ),
                           ),
-                          readOnly: true,
-                          onTap: () async {
-                            await _selectDate(context);
-                            if (_selectedDate != null) {
-                              _dobController.text = _selectedDate!.toLocal().toString().split(' ')[0];
-                            }
-                            // Calculate age here
-                            int age = DateTime.now().year - _selectedDate!.year;
-                            if (DateTime.now().month < _selectedDate!.month ||
-                                (DateTime.now().month == _selectedDate!.month &&
-                                    DateTime.now().day < _selectedDate!.day)) {
-                              age--;
-                            }
-                            // Check if the age is between 7 and 17
-                            if (age >= 7 && age <= 17) {
-                              // Valid age, you can proceed
-                              print('Valid age: $age');
-                            } else {
-                              // Invalid age, show an error message or take appropriate action
-                              print('Invalid age: $age');
-                            }
-                          },
-                          // validator: (value) {
-                          //   if (value == null || value.isEmpty) {
-                          //     return 'Please select your date of birth';
-                          //   }
-                          //   return null;
-                          // },
+                          filled: true,
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
                         ),
-                      ),
-
+                        // validator: (value) {
+                        //   if (value == null || value.isEmpty) {
+                        //     return 'Please enter your full name';
+                        //   }
+                        //   return null;
+                        // },
+                      ),),
                       Padding(
                         padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
                         child: TextFormField(
@@ -287,10 +250,11 @@ class _RegisterUserAsAdminPageState extends State<RegisterUserAsAdminPage>{
                         ElevatedButton(
                           onPressed: () {
                             if (_loginFormKey.currentState?.validate() ?? false)
-                            {}
-                            Navigator.pushNamed(context, AppRoutes.startExam);
+                            {
+                              addNewPlayer();
+                            }
                           },
-                          child: Text('Register', style: TextStyle(fontSize: 20, color:Colors.white)),
+                          child: Text('Add Player', style: TextStyle(fontSize: 20, color:Colors.white)),
                           style: ElevatedButton.styleFrom(
                             elevation: 10, // Set a higher elevation value
                             backgroundColor: Colors.indigo[900],
@@ -418,5 +382,18 @@ class _RegisterUserAsAdminPageState extends State<RegisterUserAsAdminPage>{
       },
     );
   }
-/**************************************************************************/
+  Future<void> addNewPlayer() async{
+    final playerId = FirestoreService().generatePlayerId(adminId);
+    await FirestoreService().addPlayer({
+      'playerId': playerId,
+      'name' : _nameController.text,
+      'gender' : _genderController.text,
+      'age' : _ageController.text,
+      'nativeLang' : _isNativeController.text,
+      'otherLang' : _failedLangController.text,
+      'nationalId' : _nationalIDController.text,
+      'result' : null,
+    }, playerId, adminId);
+    Navigator.pop(context);
+  }
 }

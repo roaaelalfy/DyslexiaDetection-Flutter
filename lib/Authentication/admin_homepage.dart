@@ -1,11 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dyslexiadetectorapp/core/app_export.dart';
-import 'package:dyslexiadetectorapp/firestore_services.dart';
+import 'package:dyslexiadetectorapp/services/firestore_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'Provider.dart';
 
 class AdminHomePage extends StatefulWidget {
-  final String admin = 'fglxRerc2FOva0Q0AGiWNGRLY0G2';
 
   @override
   State<AdminHomePage> createState() => _AdminHomePageState();
@@ -13,11 +14,12 @@ class AdminHomePage extends StatefulWidget {
 
 class _AdminHomePageState extends State<AdminHomePage> {
   late Future<List<Map<String, dynamic>>> playersFuture;
+  final adminId = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
     super.initState();
-    playersFuture = FirestoreService().getAllAddedPlayers(widget.admin);
+    playersFuture = FirestoreService().getAllAddedPlayers(adminId);
   }
 
   Widget buildGenderImage(String gender) {
@@ -28,7 +30,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
           width: 100, // specify the desired width
           height: 100, // specify the desired height
       );
-    } else if (gender == 'female') {
+    } else if (gender == 'Female') {
         return Image.asset(
           'assets/images/girl_avatar.png',
           width: 120, // specify the desired width
@@ -41,7 +43,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   Widget buildPlayerCard(Map<String, dynamic> player) {
     return Card(
-
       elevation: 8,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -67,6 +68,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
             ],
           ),
         ),
+        onTap: (){
+          // set playerId and isAddedPlayer flag in provider to be accessible to all screens
+          Provider.of<MyProvider>(context, listen: false).setPlayerId(player['playerId']);
+          Provider.of<MyProvider>(context, listen: false).setIsAddedPlayer(true);
+
+          Navigator.pushNamed(context, AppRoutes.startExam);
+        },
       ),
     );
   }

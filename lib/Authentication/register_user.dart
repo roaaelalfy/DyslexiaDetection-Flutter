@@ -1,6 +1,12 @@
 import 'package:dyslexiadetectorapp/core/app_export.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../services/firebase_auth.dart';
+import '../services/firestore_services.dart';
+import 'Provider.dart';
 
 class RegisterUserPage extends StatefulWidget{
   RegisterUserPage({super.key});
@@ -17,13 +23,14 @@ class _RegisterUserPageState extends State<RegisterUserPage>{
   TextEditingController _nationalIDController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-  TextEditingController _dobController = TextEditingController();
+  TextEditingController _ageController = TextEditingController();
   TextEditingController _genderController = TextEditingController();
   TextEditingController _isNativeController = TextEditingController();
   TextEditingController _failedLangController = TextEditingController();
-
+  late int age;
   DateTime? _selectedDate;
 
+  final FirebaseAuthService _auth = FirebaseAuthService();
 
   void initState() {
     super.initState();
@@ -35,7 +42,7 @@ class _RegisterUserPageState extends State<RegisterUserPage>{
     _passwordController.dispose();
     _failedLangController.dispose();
     _isNativeController.dispose();
-    _dobController.dispose();
+    _ageController.dispose();
     _genderController.dispose();
 
     super.dispose();
@@ -104,13 +111,13 @@ class _RegisterUserPageState extends State<RegisterUserPage>{
                           // },
                         ),
                       ),
-
                       Padding(
                         padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
                         child: TextFormField(
-                          controller: _dobController,
+                          controller: _ageController,
                           decoration: InputDecoration(
-                            hintText: 'Select Date of Birth',
+                            prefixIcon: Icon(Icons.calendar_today),
+                            hintText: 'Enter Age',
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(25),
                               borderSide: const BorderSide(
@@ -120,42 +127,14 @@ class _RegisterUserPageState extends State<RegisterUserPage>{
                             ),
                             filled: true,
                             floatingLabelBehavior: FloatingLabelBehavior.always,
-                            prefixIcon: InkWell(
-                              onTap: () => _selectDate(context),
-                              child: Icon(Icons.calendar_today),
-                            ),
                           ),
-                          readOnly: true,
-                          onTap: () async {
-                            await _selectDate(context);
-                            if (_selectedDate != null) {
-                              _dobController.text = _selectedDate!.toLocal().toString().split(' ')[0];
-                            }
-                            // Calculate age here
-                            int age = DateTime.now().year - _selectedDate!.year;
-                            if (DateTime.now().month < _selectedDate!.month ||
-                                (DateTime.now().month == _selectedDate!.month &&
-                                    DateTime.now().day < _selectedDate!.day)) {
-                              age--;
-                            }
-                            // Check if the age is between 7 and 17
-                            if (age >= 7 && age <= 17) {
-                              // Valid age, you can proceed
-                              print('Valid age: $age');
-                            } else {
-                              // Invalid age, show an error message or take appropriate action
-                              print('Invalid age: $age');
-                            }
-                          },
                           // validator: (value) {
                           //   if (value == null || value.isEmpty) {
-                          //     return 'Please select your date of birth';
+                          //     return 'Please enter your full name';
                           //   }
                           //   return null;
                           // },
-                        ),
-                      ),
-
+                        ),),
                       Padding(
                         padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
                         child: TextFormField(
@@ -349,8 +328,9 @@ class _RegisterUserPageState extends State<RegisterUserPage>{
                         ElevatedButton(
                           onPressed: () {
                             if (_loginFormKey.currentState?.validate() ?? false)
-                            {}
-                            Navigator.pushNamed(context, AppRoutes.startExam);
+                            {
+                              registerNewUser();
+                            }
                           },
                           child: Text('Register', style: TextStyle(fontSize: 20, color:Colors.white)),
                           style: ElevatedButton.styleFrom(
@@ -371,6 +351,52 @@ class _RegisterUserPageState extends State<RegisterUserPage>{
           )
       ),
     );
+  }
+
+  void registerNewUser() async {
+    String email = _emailController.text;
+    String password = _passwordController.text;
+    String username = _nameController.text;
+    String gender = _genderController.text;
+    String nationalId = _nationalIDController.text;
+    String nativeLang = _isNativeController.text;
+    String otherLang = _failedLangController.text;
+    String age = _ageController.text;
+
+    User? user = await _auth.signUpWithEmailAndPassword(email, password);
+    if (user != null) {
+      addUserToFirestore(
+          user,
+          username,
+          email,
+          password,
+          age,
+          gender,
+          nationalId,
+          nativeLang,
+          otherLang);
+      print('Added new user to firestore');
+      Navigator.pushNamed(context, AppRoutes.startExam);
+    } else {
+      print('Process Failed');
+    }
+  }
+
+  Future<void> addUserToFirestore(User user, String username, String email,
+      String password, String age, String gender, String nationalId,
+      String nativeLang, String otherLang) async {
+    await FirestoreService().playersCollection.doc(user.uid).set({
+      'userId': user.uid,
+      'name': username,
+      'email': user.email,
+      'password': password,
+      'gender': gender,
+      'age': age,
+      'nationalId': nationalId,
+      'nativeLang': nativeLang,
+      'otherLang': otherLang,
+      'role': "user",
+    });
   }
 
   /******************Gender DropDown**************************************************/

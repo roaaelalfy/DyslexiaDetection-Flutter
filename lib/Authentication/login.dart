@@ -1,6 +1,9 @@
 import 'package:dyslexiadetectorapp/core/app_export.dart';
+import 'package:dyslexiadetectorapp/services/firestore_services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../services/firebase_auth.dart';
 
 class LoginPage extends StatefulWidget{
   LoginPage({super.key});
@@ -12,6 +15,8 @@ class _LoginPageState extends State<LoginPage>{
 
   TextEditingController _loginemailController = TextEditingController();
   TextEditingController _loginpasswordController = TextEditingController();
+
+  final FirebaseAuthService _auth = FirebaseAuthService();
 
   void initState() {
     super.initState();
@@ -92,6 +97,7 @@ class _LoginPageState extends State<LoginPage>{
                              padding: EdgeInsets.fromLTRB(50, 5, 50, 0),
                              child: TextFormField(
                                controller: _loginpasswordController,
+                               obscureText: true,
                                decoration: InputDecoration(
                                  prefixIcon: Icon(Icons.lock),
                                  hintText: 'Enter your password',
@@ -122,7 +128,9 @@ class _LoginPageState extends State<LoginPage>{
                                  ElevatedButton(
                                    onPressed: () {
                                      if (_loginFormKey.currentState?.validate() ?? false)
-                                     {}
+                                     {
+                                       login();
+                                     }
                                    },
                                    child: Text('Login', style: TextStyle(fontSize: 20, color:Colors.white)),
                                    style: ElevatedButton.styleFrom(
@@ -157,10 +165,45 @@ class _LoginPageState extends State<LoginPage>{
                    ),
                  ),
                )
-
          ),
        ],
      ),
    );
+  }
+
+  void login() async{
+    String email = _loginemailController.text;
+    String password = _loginpasswordController.text;
+
+    User? user = await _auth.signInWithEmailAndPassword(email, password);
+    if (user != null){
+      final roleOfCurrentUser = await FirestoreService().getRolebyUserId(user.uid);
+      if(roleOfCurrentUser == "admin"){
+        Navigator.pushNamed(context,AppRoutes.adminHomePage);
+      }else if(roleOfCurrentUser == "user") {
+        Navigator.pushNamed(context, AppRoutes.startExam);
+      }
+    } else{
+      _showErrorMessage('Invalid email or password');
+    }
+  }
+  void _showErrorMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Could not login'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('OK' , style: TextStyle(color:Colors.blue)),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

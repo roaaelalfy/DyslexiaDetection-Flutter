@@ -1,7 +1,7 @@
 import 'package:dyslexiadetectorapp/Authentication/countdown.dart';
 import 'package:dyslexiadetectorapp/Authentication/login.dart';
 import 'package:dyslexiadetectorapp/Authentication/admin_homepage.dart';
-import 'package:dyslexiadetectorapp/Authentication/register.dart';
+import 'package:dyslexiadetectorapp/Authentication/register_admin.dart';
 import 'package:dyslexiadetectorapp/Authentication/register_user.dart';
 import 'package:dyslexiadetectorapp/Authentication/register_user_as_admin.dart';
 import 'package:dyslexiadetectorapp/Authentication/role.dart';
