@@ -1,5 +1,6 @@
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:async';
@@ -51,6 +52,10 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
     if (timerStarted== false) {
       _startTimer();
     }
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
   }
 
   Future<void> _initTts() async {
