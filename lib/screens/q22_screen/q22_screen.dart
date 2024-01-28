@@ -4,7 +4,6 @@ import 'package:dyslexiadetectorapp/firestore_services.dart';
 import 'package:dyslexiadetectorapp/widgets/custom_outlined_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'dart:math';
 import 'dart:async';
 
@@ -19,28 +18,24 @@ class Q22Screen extends StatefulWidget {
 }
 
 class _Q22ScreenState extends State<Q22Screen> {
-  // List<Map<String, String>> words = [
-  //   {'w': "_ith"},
-  //   {'b': "_oat"},
-  //   {'a':"r_in"},
-  //   {'p':"_lum"},
-  //   {'e':"hous_"},
-  //   {'o':"br_wn"},
-  //   {'n':"_ature"},
-  //   {'u':"lang_age"},
-  //   {'d':"brea_"},
-  // ];
-  static Map<String, List<String>> words = {
-    'w': ["_ith"],
-    'b': ["_oat"],
-    'a': ["r_in"],
-    'p': ["_lum"],
-    'e': ["hous_"],
-    'o': ["br_wn"],
-    'n': ["_ature"],
-    'u': ["lang_age"]
-  };
-  List<String> missingLetters = ["wnmx", "daeb", "adbr", "apeq","aeui","oeau","nuea","eaui","qbdc"];
+  List<Map<String, String>> words = [
+    {'w': "_ith"},
+    {'b': "_oat"},
+    {'a':"r_in"},
+    {'p':"_lum"},
+    {'e':"hous_"},
+    {'o':"br_wn"},
+    {'n':"_ature"},
+    {'u':"lang_age"},
+    {'d':"brea_"},
+    {'i':"ja_l"},
+    {'q':"e_ual"},
+    {'f':"_armer"},
+    {'c':"fa_e"},
+  ];
+
+  List<String> missingLetters = ["wnmx", "daeb", "adbr", "apeq","aeui","oeau","nuea","eaui","dbqp","uigj","eaqf","epdf","aeuc"];
+
   static int clicks =0;
   static int hits =0;
   static int misses =0;
@@ -53,6 +48,7 @@ class _Q22ScreenState extends State<Q22Screen> {
 
   String buttonText="";
   late String randomKey;
+
   List<String> selectedLetters = [];
   FlutterTts flutterTts = FlutterTts();
   static bool playedSound = false;
@@ -66,7 +62,9 @@ class _Q22ScreenState extends State<Q22Screen> {
   @override
   void initState() {
     super.initState();
-    _updateWordAndLetters();
+    //_updateWordAndLetters();
+    _generateRandomIndex();
+    _generateRandomTestWord();
     if(!playedSound){
     _initTts();
     loadLetterSound();
@@ -128,46 +126,20 @@ class _Q22ScreenState extends State<Q22Screen> {
     accuracy=0;
     score=0;
   }
-  void _updateWordAndLetters() {
-      Random random = Random();
-      randomIndex = random.nextInt(words.length);
-      randomKey = words.keys.elementAt(randomIndex);
-      //Map<String, String> currentWord = words[randomIndex];
-      //buttonText = currentWord.values.first;
-
-     // randomKey = words[randomIndex].keys.first;
-      setState(() {
-        buttonText = words[randomKey]![0];
-        selectedLetters = missingLetters[randomIndex].split('');
-      });
 
 
-  }
-  // void _updateWordAndLetters() {
-  //   Random random = Random();
-  //   randomIndex = random.nextInt(words.length);
-  //   currentKey = words.keys.elementAt(randomIndex);
-  //
-  //   setState(() {
-  //     buttonText = words[currentKey]![0];
-  //     selectedLetters = missingLetters[randomIndex].split('');
-  //   });
-  // }
-
-  // void _updateButtonAndLetters() {
-  //   Random random = Random();
-  //   randomIndex = random.nextInt(words.length);
-  //   randomKey = words.keys.elementAt(randomIndex);
-  //   setState(() {
-  //     buttonText = words[randomKey]![0];
-  //     selectedLetters = missingLetters[randomIndex].split('');
-  //   });
-  // }
-
-  List<String> generateRandomLetters() {
+  void _generateRandomIndex() {
     Random random = Random();
-    int randomIndex = random.nextInt(missingLetters.length);
+    randomIndex = random.nextInt(words.length);
+  }
+  void _generateRandomTestWord() {
+    Map<String, String> randomMap = words[randomIndex];
+     randomKey = randomMap.keys.first;
+    buttonText = words[randomIndex].values.first;
+  }
+  List<String> generateRandomLetters() {
     return missingLetters[randomIndex].split('');
+
   }
 
   @override
@@ -188,7 +160,7 @@ class _Q22ScreenState extends State<Q22Screen> {
                 buttonStyle: CustomButtonStyles.outlineLightBlueTL25,
               ),
               SizedBox(height: 25.v),
-              _buildLetterContainers(context,selectedLetters),
+              _buildLetterContainers(context,generateRandomLetters()),
             ],
           ),
         ),
@@ -217,29 +189,20 @@ class _Q22ScreenState extends State<Q22Screen> {
   Widget _buildContainer(BuildContext context, String text) {
     return GestureDetector(
       onTap: () {
-       // words.removeAt(randomIndex);
-        //missingLetters.removeAt(randomIndex);
+        setState(() {
         // save the # clicks , misses , hits then reload the screen
          clicks++;
          print("clicks:$clicks");
          print("text:$text");
-         print("buttonText:$randomKey");
-        // print("Index:$randomIndex");
         if(text==randomKey){
          hits++;
          print("hits:$hits");
         }else{misses++;print("misses:$misses");}
-         _removeCurrentWord();
-         _updateWordAndLetters();
-         Navigator.pushNamed(context, AppRoutes.q22Screen);
-        // setState(() {
-        //   _updateListsAndNavigate();
-        //   // words.remove(randomKey);
-        //   // missingLetters.removeAt(randomIndex);
-        //   // _updateWordAndLetters();
-        //   // Navigator.pushNamed(context, AppRoutes.q22Screen);
-        //
-        // });
+         words.removeAt(randomIndex);
+         missingLetters.removeAt(randomIndex);
+         _generateRandomIndex();
+         _generateRandomTestWord();
+        });
 
       },
       child: Container(
@@ -268,34 +231,8 @@ class _Q22ScreenState extends State<Q22Screen> {
       ),
     );
   }
-  // void _updateListsAndNavigate() {
-  //   _removeCurrentWord();
-  //   //setState(() {
-  //     //words.removeWhere((word) => word.keys.first == randomKey);
-  //    // missingLetters.removeAt(randomIndex);
-  //   //});
-  //
-  //   _updateWordAndLetters();
-  //
-  //   Navigator.pushNamed(context, AppRoutes.q22Screen);
-  // }
-  void _removeCurrentWord() {
-    setState(() {
-      words.remove(randomIndex);
-      missingLetters.removeAt(randomIndex);
-    });
-  }
-  // void _updateListsAndNavigate() {
-  //    setState(() {
-  //      // Remove elements from the copies
-  //      words.removeAt(randomIndex);
-  //      missingLetters.removeAt(randomIndex);
-  //      _updateWordAndLetters();
-  //
-  //    });
-  //
-  //      Navigator.pushNamed(context, AppRoutes.q22Screen);
-  //  }
+
+
   Future<void> loadLetterSound() async{
     // Speak the random letter
     try {
