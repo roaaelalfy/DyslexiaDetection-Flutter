@@ -2,7 +2,7 @@ name: dyslexiadetectorapp
 description: A new Flutter project.
 version: 1.0.0+1
 environment: 
-  sdk: '3.0.6'
+  sdk: '>=3.0.6 <=3.2.2'
 dependencies: 
   flutter: 
     sdk: flutter
@@ -36,6 +36,8 @@ flutter:
     - assets/images/logo_navy.png
     - assets/images/role_wallpaper.png
     - assets/images/start_exam.png
+    - assets/images/boy_avatar.png
+    - assets/images/girl_avatar.png
   fonts: 
     - family: Inter
       fonts: 

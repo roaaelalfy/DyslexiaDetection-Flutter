@@ -63,7 +63,7 @@ class _RegisterPageState extends State<RegisterPage>{
           centerTitle: true,),
           body: SingleChildScrollView(
                 child: Padding(
-                  padding:EdgeInsets.only(top:10),
+                  padding:EdgeInsets.only(top:40),
                   child: Form(
                     key: _loginFormKey,
                     child: Padding(
@@ -187,6 +187,31 @@ class _RegisterPageState extends State<RegisterPage>{
                           Padding(
                             padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
                             child: TextFormField(
+                              controller: _passwordController,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.lock),
+                                hintText: 'Enter your password',
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                  borderSide: const BorderSide(
+                                    color: Colors.black12,
+                                    width: 1,
+                                  ),
+                                ),
+                                filled: true,
+                                floatingLabelBehavior: FloatingLabelBehavior.always,
+                              ),
+                              // validator: (value) {
+                              //   if (value == null || value.isEmpty) {
+                              //     return 'Please enter your password';
+                              //   }
+                              //   return null;
+                              // },
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
+                            child: TextFormField(
                               controller: _genderController,
                               readOnly: true,
                               onTap: () {
@@ -221,81 +246,6 @@ class _RegisterPageState extends State<RegisterPage>{
                               // },
                             ),
                           ),
-
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
-                            child: TextFormField(
-                              controller: _isNativeController,
-                              readOnly: true,
-                              onTap: () {
-                                // Open dropdown menu when the text field is tapped
-                                _openNativeLanguageDropdown(context);
-                              },
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.language),
-                                hintText: 'Is English you native language?',
-                                suffixIcon: InkWell(
-                                  onTap: () {
-                                    // Open dropdown menu when the suffix icon is pressed
-                                    _openNativeLanguageDropdown(context);
-                                  },
-                                  child: Icon(Icons.arrow_drop_down),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(25),
-                                  borderSide: const BorderSide(
-                                    color: Colors.black12,
-                                    width: 1,
-                                  ),
-                                ),
-                                filled: true,
-                                floatingLabelBehavior: FloatingLabelBehavior.always,
-                              ),
-                              // validator: (value) {
-                              //   if (value == null || value.isEmpty) {
-                              //     return 'this field is required';
-                              //   }
-                              //   return null;
-                              // },
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
-                            child: TextFormField(
-                              controller: _failedLangController,
-                              readOnly: true,
-                              onTap: () {
-                                // Open dropdown menu when the text field is tapped
-                                _openFailedLanguageDropdown(context);
-                              },
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.sms_failed),
-                                hintText: 'Failed a language subject?',
-                                suffixIcon: InkWell(
-                                  onTap: () {
-                                    // Open dropdown menu when the suffix icon is pressed
-                                    _openFailedLanguageDropdown(context);
-                                  },
-                                  child: Icon(Icons.arrow_drop_down),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(25),
-                                  borderSide: const BorderSide(
-                                    color: Colors.black12,
-                                    width: 1,
-                                  ),
-                                ),
-                                filled: true,
-                                floatingLabelBehavior: FloatingLabelBehavior.always,
-                              ),
-                              // validator: (value) {
-                              //   if (value == null || value.isEmpty) {
-                              //     return 'This field is required';
-                              //   }
-                              //   return null;
-                              // },
-                            ),
-                          ),
                           Padding(
                             padding: EdgeInsets.all(15),
                             child:
@@ -303,7 +253,7 @@ class _RegisterPageState extends State<RegisterPage>{
                                   onPressed: () {
                                     if (_loginFormKey.currentState?.validate() ?? false)
                                     {}
-                                    Navigator.pushNamed(context, AppRoutes.startExam);
+                                    Navigator.pushNamed(context, AppRoutes.adminHomePage);
                                   },
                                   child: Text('Register', style: TextStyle(fontSize: 20, color:Colors.white)),
                                   style: ElevatedButton.styleFrom(

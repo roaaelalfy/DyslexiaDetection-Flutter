@@ -66,6 +66,7 @@ class FirestoreService {
           .map((playerSnapshot) {
         return {
           //'playerId': playerSnapshot['playerId'],
+          'name': playerSnapshot['name'],
           'gender': playerSnapshot['gender'],
           'nativeLang': playerSnapshot['nativeLang'],
           'otherLang': playerSnapshot['otherLang'],

@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage>{
                    child: Form(
                      key: _loginFormKey,
                      child: Padding(
-                       padding: EdgeInsets.fromLTRB(0, 0, 0, 150),
+                       padding: EdgeInsets.fromLTRB(0, 0, 0, 80),
                        child: Column(
                          mainAxisAlignment: MainAxisAlignment.center,
                          mainAxisSize: MainAxisSize.max,
@@ -119,24 +119,6 @@ class _LoginPageState extends State<LoginPage>{
                                mainAxisSize: MainAxisSize.max,
                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                children: [
-                                 Column(
-                                   mainAxisSize: MainAxisSize.max,
-                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                   children: [
-                                     TextButton(
-                                         onPressed: () {
-                                           Navigator.pushNamed(context,AppRoutes.role);
-                                         },
-                                         child: Text(
-                                           ' Create Account',
-                                           style: TextStyle(fontSize: 20,
-                                               color: Colors.lightBlue[900],
-                                               fontWeight: FontWeight.bold),
-                                         ),
-                                     ),
-                                   ],
-
-                                 ),
                                  ElevatedButton(
                                    onPressed: () {
                                      if (_loginFormKey.currentState?.validate() ?? false)
@@ -150,6 +132,20 @@ class _LoginPageState extends State<LoginPage>{
                                      shape: RoundedRectangleBorder(
                                        borderRadius: BorderRadius.circular(25.0),
                                      ),
+                                   ),
+                                 ),
+                                 TextButton(
+                                   onPressed: () {
+                                     Navigator.pushNamed(context,AppRoutes.role);
+                                   },
+                                   child: Text(
+                                     ' Create Account',
+                                     style: TextStyle(fontSize: 20,
+                                         color: Colors.white,
+                                         fontWeight: FontWeight.bold,
+                                         decoration: TextDecoration.underline,
+                                         decorationColor: Colors.white, // Optional: Set the underline color
+                                         decorationThickness: 2.0,  ),
                                    ),
                                  ),
                                ],

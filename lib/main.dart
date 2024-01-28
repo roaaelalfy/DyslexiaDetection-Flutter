@@ -16,8 +16,8 @@ var globalMessengerKey = GlobalKey<ScaffoldMessengerState>();
   }
   // Set landscape orientation
   SystemChrome.setPreferredOrientations([
-  DeviceOrientation.landscapeLeft,
-  DeviceOrientation.landscapeRight,
+  DeviceOrientation.portraitUp,
+  DeviceOrientation.portraitDown,
   ]);
 
   ///Please update theme as per your need if required.
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
           theme: theme,
           title: 'dyslexiadetectorapp',
           debugShowCheckedModeBanner: false,
-          initialRoute: AppRoutes.q1Screen,
+          initialRoute: AppRoutes.splashScreen,
           routes: AppRoutes.routes,
         );
       },

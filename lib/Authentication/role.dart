@@ -47,7 +47,7 @@ class _RolePageState extends State<RolePage>{
                 ElevatedButton(
                   onPressed: () {
                     role ='User';
-                    Navigator.pushNamed(context, AppRoutes.register);
+                    Navigator.pushNamed(context, AppRoutes.registerUser);
                   },
                   child: Text(
                       'User', style: TextStyle(fontSize: 20,
@@ -70,6 +70,7 @@ class _RolePageState extends State<RolePage>{
                   onPressed: () {
                     role ='Teacher';
                     Navigator.pushNamed(context, AppRoutes.register);
+
                   },
                   child: Text(
                       'Parent/Teacher', style: TextStyle(fontSize: 20,
