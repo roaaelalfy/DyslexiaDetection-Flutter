@@ -45,8 +45,6 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
     super.initState();
     exerciseLetters=[];
     _initExercise();
-    //print all data in database
-    firestoreService.getAllScreensDataOfPlayer("SqnGDMQzmZMlJ06aURNl5rnnUQL2");
 
     // start timer after the sound is played to start the test
     print("timerStarted $timerStarted");
@@ -202,6 +200,7 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   }
 
   Future<void> updateDatabase(int currentScreen) async{
+    // use player's id from provider class
     await firestoreService.addScreenDataForPlayer({
       'clicks$currentScreen': clicks,
       'hits$currentScreen': hits,
