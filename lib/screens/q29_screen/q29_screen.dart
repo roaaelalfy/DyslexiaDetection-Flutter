@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:dyslexiadetectorapp/core/app_export.dart';
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
+import 'package:dyslexiadetectorapp/firestore_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -34,6 +35,8 @@ class _Q29ScreenState extends State<Q29Screen> {
   double progressPercentage = 1.0;
   bool timerStarted = false;
   bool soundPlayed = false;
+
+  final FirestoreService firestoreService = FirestoreService();
 
   // performance measures
   int clicks = 0;
@@ -79,6 +82,8 @@ class _Q29ScreenState extends State<Q29Screen> {
         missrate = misses / clicks;
         accuracy = hits / clicks;
         score = hits;
+        updateDatabase(currentScreen);
+
         Navigator.pushNamed(context, AppRoutes.q30Screen);
       }
     });
@@ -169,5 +174,15 @@ class _Q29ScreenState extends State<Q29Screen> {
       } catch (e) {
       print("TTS Error: $e");
     }
+  }
+  Future<void> updateDatabase(int currentScreen) async{
+    await firestoreService.addScreenDataForPlayer({
+      'clicks$currentScreen': clicks,
+      'hits$currentScreen': hits,
+      'miss$currentScreen': misses,
+      'score$currentScreen': score,
+      'accuracy$currentScreen': accuracy,
+      'missrate$currentScreen': missrate,
+    });
   }
 }

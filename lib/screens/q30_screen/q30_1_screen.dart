@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:dyslexiadetectorapp/core/app_export.dart';
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
+import 'package:dyslexiadetectorapp/firestore_services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -16,6 +17,8 @@ class _Q301ScreenState extends State<Q301Screen> {
   List<String> pressedLetters = [];
   late List<String> correctWord=[];
 
+  final FirestoreService firestoreService = FirestoreService();
+
   late Timer _timer;
   int _timerCount = 25; // Initial timer count in seconds
   static double progressPercentage = 1.0;
@@ -26,6 +29,7 @@ class _Q301ScreenState extends State<Q301Screen> {
   static int score =0;
   static double accuracy =0;
   static double missrate =0;
+  final int currentScreen = 30;
 
   @override
   void initState() {
@@ -55,6 +59,8 @@ class _Q301ScreenState extends State<Q301Screen> {
         accuracy =hits / clicks;
         score = hits;
         //update database
+
+        updateDatabase(currentScreen);
         //reset performance measures
         clicks=0;
         hits=0;
@@ -210,5 +216,15 @@ class _Q301ScreenState extends State<Q301Screen> {
         ),
       ),
     );
+  }
+  Future<void> updateDatabase(int currentScreen) async{
+    await firestoreService.addScreenDataForPlayer({
+      'clicks$currentScreen': clicks,
+      'hits$currentScreen': hits,
+      'miss$currentScreen': misses,
+      'score$currentScreen': score,
+      'accuracy$currentScreen': accuracy,
+      'missrate$currentScreen': missrate,
+    });
   }
 }

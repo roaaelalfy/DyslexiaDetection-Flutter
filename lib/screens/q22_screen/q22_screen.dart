@@ -1,5 +1,6 @@
 import 'package:dyslexiadetectorapp/core/app_export.dart';
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
+import 'package:dyslexiadetectorapp/firestore_services.dart';
 import 'package:dyslexiadetectorapp/widgets/custom_outlined_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -46,6 +47,10 @@ class _Q22ScreenState extends State<Q22Screen> {
   static int score =0;
   static double accuracy =0;
   static double missrate =0;
+  final FirestoreService firestoreService = FirestoreService();
+
+  final int currentScreen =22;
+
   String buttonText="";
   late String randomKey;
   List<String> selectedLetters = [];
@@ -98,6 +103,7 @@ class _Q22ScreenState extends State<Q22Screen> {
         score = hits;
         print("score:$score");
         //update database
+        updateDatabase(currentScreen);
         //reset performance measures
         clicks=0;
         hits=0;
@@ -300,6 +306,15 @@ class _Q22ScreenState extends State<Q22Screen> {
     }
 
   }
-
+  Future<void> updateDatabase(int currentScreen) async{
+    await firestoreService.addScreenDataForPlayer({
+      'clicks$currentScreen': clicks,
+      'hits$currentScreen': hits,
+      'miss$currentScreen': misses,
+      'score$currentScreen': score,
+      'accuracy$currentScreen': accuracy,
+      'missrate$currentScreen': missrate,
+    });
+  }
 }
 

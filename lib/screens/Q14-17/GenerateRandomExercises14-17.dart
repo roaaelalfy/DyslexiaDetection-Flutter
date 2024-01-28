@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
+import 'package:dyslexiadetectorapp/firestore_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -28,6 +29,7 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
 
   late FlutterTts flutterTts =FlutterTts();
   static bool playedSound = false;
+  final FirestoreService firestoreService = FirestoreService();
 
   late Timer _timer;
   int _timerCount = 25;  // Initial timer count in seconds
@@ -122,6 +124,7 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
         score = hits;
         print("hits:$hits");
         //update database
+        updateDatabase(widget.currentScreen);
         //reset performance measures
         clicks=0;
         hits=0;
@@ -214,5 +217,16 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
     } catch (e) {
       print("TTS Error: $e");
     }
+  }
+
+  Future<void> updateDatabase(int currentScreen) async{
+    await firestoreService.addScreenDataForPlayer({
+      'clicks$currentScreen': clicks,
+      'hits$currentScreen': hits,
+      'miss$currentScreen': misses,
+      'score$currentScreen': score,
+      'accuracy$currentScreen': accuracy,
+      'missrate$currentScreen': missrate,
+    });
   }
 }

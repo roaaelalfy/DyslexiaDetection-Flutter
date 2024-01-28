@@ -3,6 +3,7 @@ import 'dart:core';
 import 'dart:math';
 import 'package:dyslexiadetectorapp/core/app_export.dart';
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
+import 'package:dyslexiadetectorapp/firestore_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -24,6 +25,9 @@ class _Q27ScreenState extends State<Q27Screen> {
   static double accuracy =0;
   static double missrate =0;
 
+  final int currentScreen = 27;
+
+  final FirestoreService firestoreService = FirestoreService();
 
   List<String> words = ['bird', 'potatoes', 'bread', 'vegetable', 'education','break'];
   late String selectedWord;
@@ -38,6 +42,8 @@ class _Q27ScreenState extends State<Q27Screen> {
   int _timerCount = 25;  // Initial timer count in seconds
   static double progressPercentage = 1.0;
   static bool timerStarted = false;
+
+
 
   @override
   void initState() {
@@ -82,6 +88,9 @@ class _Q27ScreenState extends State<Q27Screen> {
         accuracy = hits / clicks;
         score = hits;
         //add to database
+
+
+        updateDatabase(currentScreen);
 
         Navigator.pushNamed(context, AppRoutes.q28Screen);
       }
@@ -199,5 +208,15 @@ class _Q27ScreenState extends State<Q27Screen> {
       print("TTS Error: $e");
     }
 
+  }
+  Future<void> updateDatabase(int currentScreen) async{
+    await firestoreService.addScreenDataForPlayer({
+      'clicks$currentScreen': clicks,
+      'hits$currentScreen': hits,
+      'miss$currentScreen': misses,
+      'score$currentScreen': score,
+      'accuracy$currentScreen': accuracy,
+      'missrate$currentScreen': missrate,
+    });
   }
 }
