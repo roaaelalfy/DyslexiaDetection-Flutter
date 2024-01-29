@@ -1,3 +1,4 @@
+import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:dyslexiadetectorapp/core/app_export.dart';
 

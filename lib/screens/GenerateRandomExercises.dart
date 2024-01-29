@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
-import 'package:dyslexiadetectorapp/firestore_services.dart';
+import 'package:dyslexiadetectorapp/services/firestore_services.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -101,12 +101,15 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
         randomIndex = null;
         playedSound = false;
         timerStarted = false;
+
         // calculate missrate ,score, accuracy and update database.
         missrate =misses / clicks;
         accuracy =hits / clicks;
         score = hits;
+
         //update database
         updateDatabase(widget.currentScreen);
+
         //reset performance measures
         clicks=0;
         hits=0;
@@ -114,6 +117,7 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
         missrate=0;
         accuracy=0;
         score=0;
+
         widget.navigateToNextScreen(context);
       }
     });

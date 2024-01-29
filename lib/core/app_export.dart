@@ -1,4 +1,3 @@
-export 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 export 'package:dyslexiadetectorapp/routes/app_routes.dart';
 export 'package:dyslexiadetectorapp/theme/app_decoration.dart';
 export 'package:dyslexiadetectorapp/theme/custom_text_style.dart';

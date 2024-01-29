@@ -1,6 +1,6 @@
 import 'package:dyslexiadetectorapp/core/app_export.dart';
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
-import 'package:dyslexiadetectorapp/firestore_services.dart';
+import 'package:dyslexiadetectorapp/services/firestore_services.dart';
 import 'package:dyslexiadetectorapp/widgets/custom_outlined_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
