@@ -1,4 +1,5 @@
 import 'package:dyslexiadetectorapp/core/app_export.dart';
+import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:dyslexiadetectorapp/widgets/base_button.dart';
 import 'package:flutter/material.dart';
 

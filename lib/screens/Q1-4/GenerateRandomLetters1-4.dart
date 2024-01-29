@@ -1,10 +1,14 @@
+import 'package:dyslexiadetectorapp/Authentication/Provider.dart';
 import 'package:dyslexiadetectorapp/core/utils/size_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:provider/provider.dart';
 import 'dart:async';
 import 'dart:math';
-import '../../firestore_services.dart';
+
+import '../../services/firestore_services.dart';
 
 class DyslexiaExerciseWidget extends StatefulWidget {
   final int gridSize;
@@ -40,17 +44,29 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
   static double accuracy =0;
   static double missrate =0;
 
+  String? playerId;
+  bool? isAddedPLayer;
+
   @override
   void initState() {
     super.initState();
     exerciseLetters=[];
     _initExercise();
 
+    playerId = Provider.of<MyProvider>(context, listen: false).playerId;
+    isAddedPLayer = Provider.of<MyProvider>(context, listen: false).isAddedPlayer;
+
+    print("playerId $playerId and isAddedPlayer $isAddedPLayer");
+
     // start timer after the sound is played to start the test
     print("timerStarted $timerStarted");
     if (timerStarted== false) {
       _startTimer();
     }
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
   }
 
   Future<void> _initTts() async {
@@ -80,6 +96,9 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
     accuracy = 0;
     score = 0;
     clicks = 0;
+
+    isAddedPLayer=false;
+    playerId = null;
     super.dispose();
   }
 
@@ -194,14 +213,15 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
     try {
       await flutterTts.speak("Choose $_randomLetter");
       playedSound = true;
+      print("playsound $playedSound");
     } catch (e) {
       print("TTS Error: $e");
     }
   }
 
   Future<void> updateDatabase(int currentScreen) async{
-    // use player's id from provider class
-    await firestoreService.addScreenDataForPlayer({
+    if(isAddedPLayer!) {
+      await firestoreService.addScreenDataForAddedPlayer(playerId!,{
       'clicks$currentScreen': clicks,
       'hits$currentScreen': hits,
       'miss$currentScreen': misses,
@@ -209,5 +229,15 @@ class _DyslexiaExerciseWidgetState extends State<DyslexiaExerciseWidget> {
       'accuracy$currentScreen': accuracy,
       'missrate$currentScreen': missrate,
     });
+    }else{
+      await firestoreService.addScreenDataForPlayer({
+        'clicks$currentScreen': clicks,
+        'hits$currentScreen': hits,
+        'miss$currentScreen': misses,
+        'score$currentScreen': score,
+        'accuracy$currentScreen': accuracy,
+        'missrate$currentScreen': missrate,
+      });
+    }
   }
 }

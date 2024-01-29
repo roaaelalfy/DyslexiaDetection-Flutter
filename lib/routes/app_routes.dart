@@ -1,7 +1,9 @@
 import 'package:dyslexiadetectorapp/Authentication/countdown.dart';
 import 'package:dyslexiadetectorapp/Authentication/login.dart';
-import 'package:dyslexiadetectorapp/Authentication/parent_homepage.dart';
-import 'package:dyslexiadetectorapp/Authentication/register.dart';
+import 'package:dyslexiadetectorapp/Authentication/admin_homepage.dart';
+import 'package:dyslexiadetectorapp/Authentication/register_admin.dart';
+import 'package:dyslexiadetectorapp/Authentication/register_user.dart';
+import 'package:dyslexiadetectorapp/Authentication/register_user_as_admin.dart';
 import 'package:dyslexiadetectorapp/Authentication/role.dart';
 import 'package:dyslexiadetectorapp/Authentication/splash_screen.dart';
 import 'package:dyslexiadetectorapp/Authentication/start_exam.dart';
@@ -45,10 +47,12 @@ class AppRoutes {
   static const String splashScreen = '/splash_screen';
   static const String login = '/login';
   static const String register = '/register';
+  static const String registerUser = '/register_user';
+  static const String registerUserAsAdmin = '/register_user_as_admin';
   static const String role = '/role';
   static const String startExam = '/start_exam';
   static const String countdown= '/countdown';
-  static const String parentHomePage = '/parent_homepage';
+  static const String adminHomePage = '/admin_homepage';
   static const String q1Screen = '/q1_screen';
   static const String q2Screen = '/q2_screen';
   static const String q3Screen = '/q3_screen';
@@ -87,11 +91,13 @@ class AppRoutes {
   static Map<String, WidgetBuilder> routes = {
     splashScreen :(context) => SplashScreen(),
     register:(context) => RegisterPage(),
+    registerUser :(context) => RegisterUserPage(),
+    registerUserAsAdmin :(context) => RegisterUserAsAdminPage(),
     login: (context) => LoginPage(),
     role: (context) => RolePage(),
     startExam : (context) => StartExamPage(),
     countdown : (context) => CountdownScreen(),
-    parentHomePage: (context) => ParentHomePage(),
+    adminHomePage: (context) => AdminHomePage(),
     q1Screen: (context) => Q1Screen(),
     q2Screen: (context) => Q2Screen(),
     q3Screen: (context) => Q3Screen(),

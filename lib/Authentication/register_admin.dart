@@ -1,6 +1,9 @@
 import 'package:dyslexiadetectorapp/core/app_export.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../services/firebase_auth.dart';
+import '../services/firestore_services.dart';
 
 class RegisterPage extends StatefulWidget{
   RegisterPage({super.key});
@@ -17,13 +20,12 @@ class _RegisterPageState extends State<RegisterPage>{
   TextEditingController _nationalIDController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-  TextEditingController _dobController = TextEditingController();
+  TextEditingController _ageController = TextEditingController();
   TextEditingController _genderController = TextEditingController();
-  TextEditingController _isNativeController = TextEditingController();
-  TextEditingController _failedLangController = TextEditingController();
 
   DateTime? _selectedDate;
 
+  final FirebaseAuthService _auth = FirebaseAuthService();
 
   void initState() {
     super.initState();
@@ -63,7 +65,7 @@ class _RegisterPageState extends State<RegisterPage>{
           centerTitle: true,),
           body: SingleChildScrollView(
                 child: Padding(
-                  padding:EdgeInsets.only(top:10),
+                  padding:EdgeInsets.only(top:40),
                   child: Form(
                     key: _loginFormKey,
                     child: Padding(
@@ -97,13 +99,13 @@ class _RegisterPageState extends State<RegisterPage>{
                               // },
                             ),
                           ),
-
                           Padding(
                             padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
                             child: TextFormField(
-                              controller: _dobController,
+                              controller: _ageController,
                               decoration: InputDecoration(
-                                hintText: 'Select Date of Birth',
+                                prefixIcon: Icon(Icons.calendar_today),
+                                hintText: 'Enter Age',
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(25),
                                   borderSide: const BorderSide(
@@ -113,27 +115,14 @@ class _RegisterPageState extends State<RegisterPage>{
                                 ),
                                 filled: true,
                                 floatingLabelBehavior: FloatingLabelBehavior.always,
-                                prefixIcon: InkWell(
-                                  onTap: () => _selectDate(context),
-                                  child: Icon(Icons.calendar_today),
-                                ),
                               ),
-                              readOnly: true,
-                              onTap: () async {
-                                await _selectDate(context);
-                                if (_selectedDate != null) {
-                                  _dobController.text = _selectedDate!.toLocal().toString().split(' ')[0];
-                                }
-                              },
                               // validator: (value) {
                               //   if (value == null || value.isEmpty) {
-                              //     return 'Please select your date of birth';
+                              //     return 'Please enter your full name';
                               //   }
                               //   return null;
                               // },
-                            ),
-                          ),
-
+                            ),),
                           Padding(
                             padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
                             child: TextFormField(
@@ -187,6 +176,31 @@ class _RegisterPageState extends State<RegisterPage>{
                           Padding(
                             padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
                             child: TextFormField(
+                              controller: _passwordController,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.lock),
+                                hintText: 'Enter your password',
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                  borderSide: const BorderSide(
+                                    color: Colors.black12,
+                                    width: 1,
+                                  ),
+                                ),
+                                filled: true,
+                                floatingLabelBehavior: FloatingLabelBehavior.always,
+                              ),
+                              // validator: (value) {
+                              //   if (value == null || value.isEmpty) {
+                              //     return 'Please enter your password';
+                              //   }
+                              //   return null;
+                              // },
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
+                            child: TextFormField(
                               controller: _genderController,
                               readOnly: true,
                               onTap: () {
@@ -221,89 +235,16 @@ class _RegisterPageState extends State<RegisterPage>{
                               // },
                             ),
                           ),
-
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
-                            child: TextFormField(
-                              controller: _isNativeController,
-                              readOnly: true,
-                              onTap: () {
-                                // Open dropdown menu when the text field is tapped
-                                _openNativeLanguageDropdown(context);
-                              },
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.language),
-                                hintText: 'Is English you native language?',
-                                suffixIcon: InkWell(
-                                  onTap: () {
-                                    // Open dropdown menu when the suffix icon is pressed
-                                    _openNativeLanguageDropdown(context);
-                                  },
-                                  child: Icon(Icons.arrow_drop_down),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(25),
-                                  borderSide: const BorderSide(
-                                    color: Colors.black12,
-                                    width: 1,
-                                  ),
-                                ),
-                                filled: true,
-                                floatingLabelBehavior: FloatingLabelBehavior.always,
-                              ),
-                              // validator: (value) {
-                              //   if (value == null || value.isEmpty) {
-                              //     return 'this field is required';
-                              //   }
-                              //   return null;
-                              // },
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(30, 5, 30, 5),
-                            child: TextFormField(
-                              controller: _failedLangController,
-                              readOnly: true,
-                              onTap: () {
-                                // Open dropdown menu when the text field is tapped
-                                _openFailedLanguageDropdown(context);
-                              },
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.sms_failed),
-                                hintText: 'Failed a language subject?',
-                                suffixIcon: InkWell(
-                                  onTap: () {
-                                    // Open dropdown menu when the suffix icon is pressed
-                                    _openFailedLanguageDropdown(context);
-                                  },
-                                  child: Icon(Icons.arrow_drop_down),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(25),
-                                  borderSide: const BorderSide(
-                                    color: Colors.black12,
-                                    width: 1,
-                                  ),
-                                ),
-                                filled: true,
-                                floatingLabelBehavior: FloatingLabelBehavior.always,
-                              ),
-                              // validator: (value) {
-                              //   if (value == null || value.isEmpty) {
-                              //     return 'This field is required';
-                              //   }
-                              //   return null;
-                              // },
-                            ),
-                          ),
                           Padding(
                             padding: EdgeInsets.all(15),
                             child:
                                 ElevatedButton(
                                   onPressed: () {
                                     if (_loginFormKey.currentState?.validate() ?? false)
-                                    {}
-                                    Navigator.pushNamed(context, AppRoutes.startExam);
+                                    {
+                                      registerNewUser();
+                                    }
+                                    Navigator.pushNamed(context, AppRoutes.adminHomePage);
                                   },
                                   child: Text('Register', style: TextStyle(fontSize: 20, color:Colors.white)),
                                   style: ElevatedButton.styleFrom(
@@ -324,6 +265,43 @@ class _RegisterPageState extends State<RegisterPage>{
               )
       ),
     );
+  }
+
+  void registerNewUser() async {
+    String email = _emailController.text;
+    String password = _passwordController.text;
+    String username = _nameController.text;
+    String gender = _genderController.text;
+    String age = _ageController.text;
+    String nationalId = _nationalIDController.text;
+
+    User? user = await _auth.signUpWithEmailAndPassword(email, password);
+    if (user != null) {
+      addUserToFirestore(
+          user,
+          username,
+          email,
+          password,
+          gender,
+          age,
+          nationalId);
+      print('Added new user to firestore');
+    } else {
+      print('Process Failed');
+    }
+  }
+
+  Future<void> addUserToFirestore(User user, String username, String email,
+      String password, String gender, String age, String nationalId) async {
+    await FirestoreService().adminsCollection.doc(user.uid).set({
+      'userId': user.uid,
+      'name': username,
+      'email': user.email,
+      'password': password,
+      'gender': gender,
+      'nationalId': nationalId,
+      'role': "admin",
+    });
   }
 
   /******************Gender DropDown**************************************************/
